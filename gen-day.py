@@ -10,9 +10,9 @@ main_folder = "src/main/kotlin/com/diutsu/" + aoc
 # Kotlin template
 main_template = """package com.diutsu.aoc24
 
-import com.diutsu.aoc24.library.readInput
-import com.diutsu.aoc24.library.runDay
-import com.diutsu.aoc24.library.validateInput
+import com.diutsu.aoc.library.readInput
+import com.diutsu.aoc.library.runDay
+import com.diutsu.aoc.library.validateInput
 
 fun main() {
 
