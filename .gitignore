@@ -4,3 +4,13 @@
 build
 src/**/*.txt
 local.properties
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### AOC test inputs
+src/main/resources
+inputs/*
