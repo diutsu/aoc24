@@ -1,10 +1,14 @@
 package com.diutsu.aoc.library
 
-import com.diutsu.aoc.library.CardinalDirections.*
+import com.diutsu.aoc.library.CardinalDirections.EAST
+import com.diutsu.aoc.library.CardinalDirections.NORTH
+import com.diutsu.aoc.library.CardinalDirections.SOUTH
+import com.diutsu.aoc.library.CardinalDirections.WEST
 import java.util.EnumMap
 import kotlin.math.abs
 
 typealias Distance = Long
+
 enum class CardinalDirections(val id: Int) {
     NORTH(0),
     EAST(1),
@@ -43,7 +47,6 @@ enum class CardinalDirections(val id: Int) {
 }
 
 data class Reference(val x: Int, val y: Int) {
-
     operator fun plus(direction: CardinalDirections): Reference =
         when (direction) {
             NORTH -> Reference(x, y - 1)
@@ -68,8 +71,7 @@ data class Reference(val x: Int, val y: Int) {
         return abs(x - reference.x) + abs(y - reference.y).toLong()
     }
 
-    fun inside(list: List<List<*>>): Boolean =
-        0 <= this.y && this.y < list.size && 0 <= this.x && this.x < list.first().size
+    fun inside(list: List<List<*>>): Boolean = 0 <= this.y && this.y < list.size && 0 <= this.x && this.x < list.first().size
 
     // This might limits the maximum X/Y value, but dramatically improves performance in some scenarions
     override fun hashCode(): Int = x * 512 + y
@@ -97,7 +99,6 @@ data class ReferenceDouble(val x: Double, val y: Double) {
 }
 
 data class ReferenceLong(val x: Long, val y: Long) {
-
     fun plus(
         direction: CardinalDirections,
         walk: Long,
@@ -126,7 +127,6 @@ data class ReferenceLong(val x: Long, val y: Long) {
 
         return true
     }
-
 }
 
 data class Movement(val direction: CardinalDirections, val reference: Reference) {
@@ -144,20 +144,18 @@ data class Reference3D(val x: Int, val y: Int, val z: Int) {
 data class Reference3DLong(val x: Long, val y: Long, val z: Long) {
     override fun toString(): String = "[$x][$y][$z]"
 
-    operator fun plus(other: Reference3DLong): Reference3DLong =
-        Reference3DLong(this.x + other.x, this.y + other.y, this.z + other.z)
+    operator fun plus(other: Reference3DLong): Reference3DLong = Reference3DLong(this.x + other.x, this.y + other.y, this.z + other.z)
 
     operator fun minus(v: Reference3DLong) = Reference3DLong(x - v.x, y - v.y, z - v.z)
 
     operator fun times(scalar: Long) = Reference3DLong(x * scalar, y * scalar, z * scalar)
 
-
     fun lengthSquared(): Long = x * x + y * y + z * z
 
     fun length(): Double = Math.sqrt(lengthSquared().toDouble())
 
-
     override fun hashCode(): Int = (x * 512 + y).toInt()
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

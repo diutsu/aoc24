@@ -1,13 +1,16 @@
 package com.diutsu.aoc.library
 
-import java.util.*
+import java.util.ArrayDeque
 
 /**
  * Traverse [graph] from [start] in DFS
  *
  * @return visitedSet
  */
-fun <T> graphTraverseDfs(start: T, graph: MutableMap<T, MutableSet<T>>): MutableSet<T> {
+fun <T> graphTraverseDfs(
+    start: T,
+    graph: MutableMap<T, MutableSet<T>>,
+): MutableSet<T> {
     val toVisit = ArrayDeque<T>().apply { add(start) }
     val visited = mutableSetOf(start)
 
@@ -26,7 +29,10 @@ fun <T> graphTraverseDfs(start: T, graph: MutableMap<T, MutableSet<T>>): Mutable
  *
  * @return visitedSet
  */
-fun <T> graphTraverseBfs(start: T, graph: MutableMap<T, MutableSet<T>>): MutableSet<T> {
+fun <T> graphTraverseBfs(
+    start: T,
+    graph: MutableMap<T, MutableSet<T>>,
+): MutableSet<T> {
     val toVisit = ArrayDeque<T>().apply { add(start) }
     val visited = mutableSetOf<T>()
 

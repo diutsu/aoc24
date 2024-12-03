@@ -5,7 +5,7 @@ import java.math.BigInteger
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.MessageDigest
-import java.util.*
+import java.util.Scanner
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -15,7 +15,7 @@ import kotlin.io.path.readText
  */
 fun readInput(name: String): List<String> {
     val file = Path("inputs/aoc24/$name.txt")
-    if(file.exists()) {
+    if (file.exists()) {
         return file.readText().trim().lines()
     } else {
         println("📄 File $file doesn't exist, return empty list.")
@@ -38,37 +38,49 @@ class LineScanner(inputStream: InputStream) : Iterator<String> {
 /**
  * Converts string to md5 hash.
  */
-fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
-    .toString(16)
-    .padStart(32, '0')
+fun String.md5() =
+    BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
+        .toString(16)
+        .padStart(32, '0')
 
 /**
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
 
-
-fun validateInput(description: String, expectecResult: Int, runnable: () -> Int) {
+fun validateInput(
+    description: String,
+    expectecResult: Int,
+    runnable: () -> Int,
+) {
     try {
         val testResult = runnable()
-        if(testResult != expectecResult) {
+        if (testResult != expectecResult) {
             println("❌ [$description] Test input from file: $testResult doesn't match $expectecResult")
         } else {
             println("✅ [$description] Test ok")
         }
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         println("💥 [$description] failed : ${e.message}}")
         e.printStackTrace()
     }
 }
 
-fun checkInput(description: String, expectecResult: Int, runnable: () -> Int) {
+fun checkInput(
+    description: String,
+    expectecResult: Int,
+    runnable: () -> Int,
+) {
     val testResult = runnable()
-    check (testResult == expectecResult) {
+    check(testResult == expectecResult) {
         println("❌ [$description] Test input from file: $testResult doesn't match $expectecResult")
     }
 }
 
-fun runDay(description: String, expected: Int? = null, runnable: () -> Int) {
-    stressTest( description, warmup = 0, iterations = 0, expected)  { runnable() }
+fun runDay(
+    description: String,
+    expected: Int? = null,
+    runnable: () -> Int,
+) {
+    stressTest(description, warmup = 0, iterations = 0, expected) { runnable() }
 }
