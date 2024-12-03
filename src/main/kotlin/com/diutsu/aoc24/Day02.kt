@@ -19,17 +19,16 @@ fun main() {
             }
     }
 
-    fun isSafeWithDampener(levels: List<Int>): Boolean {
-        val firstPass = isSafe(levels)
-        if (firstPass.first) return true
+    fun isSafeWithDampener(levels: List<Int>): Boolean =
         // if the first pass fails, we need to try to remove one of the elements and try again
         // The naive way is to try with each one of levels, but if we remember the index of the first failure
         // there are only 3 possible causes for a failure: the current level, the previous index or the one before that.
-        return sequenceOf(firstPass.second, firstPass.second - 1, firstPass.second - 2)
+        isSafe(levels).let { firstPass ->
+            firstPass.first || sequenceOf(firstPass.second, firstPass.second - 1, firstPass.second - 2)
             .filter { it >= 0 }
-            .firstOrNull { index ->
+            .any { index ->
                 isSafe(levels.subList(0, index) + levels.subList(index + 1, levels.size)).first
-            } != null
+            }
     }
 
     fun part1(input: List<String>): Int  =
@@ -61,7 +60,7 @@ fun main() {
 //        part2(readInput("$day/example2"))
 //    }
 
-    stressTest( "$day-part2-input" , 10, 100 ) {
+    stressTest( "$day-part2-input" , 10, 1000 ) {
         part2(readInput("$day/input"))
     }
 
