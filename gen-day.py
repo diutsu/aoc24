@@ -82,12 +82,11 @@ def get_input_files(year, day) :
 
     # Save example data to example.txt
     example_file_path = os.path.join(directory, 'example.txt')
-    example_data = ""
 
     # Check if the file already exists
-    if not os.path.exists(example_file_path) and example_data:
+    if not os.path.exists(example_file_path):
         with open(example_file_path, 'w') as example_file:
-            example_file.write(example_data)
+            example_file.write("")
     else:
         print(f"  Example data file '{example_file_path}' already exists. Skipping creation.")
 

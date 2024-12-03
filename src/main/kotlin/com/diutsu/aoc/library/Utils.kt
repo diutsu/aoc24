@@ -49,7 +49,8 @@ fun validateInput(description: String, expectecResult: Int, runnable: () -> Int)
             println("✅ [$description] Test ok")
         }
     } catch (e : Exception) {
-        println("💥 [$description] failed : ${e.message}")
+        println("💥 [$description] failed : ${e.message}}")
+        e.printStackTrace()
     }
 }
 

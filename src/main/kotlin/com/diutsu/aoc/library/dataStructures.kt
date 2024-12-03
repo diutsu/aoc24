@@ -1,10 +1,10 @@
 package com.diutsu.aoc.library
 
-import com.diutsu.aoc23.Distance
-import com.diutsu.aoc23.library.CardinalDirections.*
+import com.diutsu.aoc.library.CardinalDirections.*
 import java.util.EnumMap
 import kotlin.math.abs
 
+typealias Distance = Long
 enum class CardinalDirections(val id: Int) {
     NORTH(0),
     EAST(1),
