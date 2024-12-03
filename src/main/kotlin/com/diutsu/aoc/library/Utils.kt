@@ -61,6 +61,17 @@ fun checkInput(description: String, expectecResult: Int, runnable: () -> Int) {
     }
 }
 
-fun runDay(description: String, runnable: () -> Int) {
-    stressTest( description, warmup = 0, iterations = 0)  { runnable().println() }
+fun runDay(description: String, expected: Int? = null, runnable: () -> Int) {
+    stressTest( description, warmup = 0, iterations = 0)  {
+        val result = runnable()
+        if (expected != null) {
+            if(result == expected) {
+                println("✅ [$description] Solution is ok: $result")
+            } else {
+                println("❌ [$description] $result doesn't match expected problem solution $expected")
+            }
+        } else {
+            runnable().println()
+        }
+    }
 }
