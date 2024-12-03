@@ -5,23 +5,33 @@ import kotlin.system.measureNanoTime
 var totalColdTime = 0L
 var totalWarmTime = 0L
 
-private val IDENT = "    "
+private val IDENT = "      "
 fun stressTest(
         description: String,
         warmup: Int = 0,
         iterations: Int = 0,
-        ut: () -> Unit
+        expected: Int? = null,
+        ut: () -> Int
 ) {
     if(warmup == 0 && iterations == 0) {
-        runOnce(description, ut)
+        runOnce(description,expected, ut )
         return
     } else {
-        println("😰 [$description] Stress Testing profile: 1 cold run, $warmup warmup run(s), measure across $iterations iterations")
+        println("😰 [$description] Stress Testing:\n${IDENT}Profile: 1 cold run, $warmup warmup run(s), measure across $iterations iterations")
         println("\uD83D\uDCCA Report: ")
     }
 
     measureNanoTime {
-        ut()
+        val result = ut()
+        if (expected != null) {
+            if(result == expected) {
+                println(IDENT + "Solution:   $result ✅")
+            } else {
+                println(IDENT + "Solution:   $result ❌ expected $expected")
+            }
+        } else {
+                println(IDENT + "Solution:   $result ❓")
+        }
     }.also {
         totalColdTime += it
         println(String.format(IDENT + "Cold:   %,7d µs", it / 1000))
@@ -37,13 +47,13 @@ fun stressTest(
     println()
 }
 
-private fun runWithStatistics(iterations: Int, ut: () -> Unit) {
+private fun runWithStatistics(iterations: Int, ut: () -> Int) {
     val times = mutableListOf<Long>()
 
     val totalTime = measureNanoTime {
         for (i in 0 until iterations) {
             val time = measureNanoTime {
-                ut.invoke()
+                ut()
             }
             times.add(time)
         }
@@ -64,13 +74,21 @@ private fun runWithStatistics(iterations: Int, ut: () -> Unit) {
     totalWarmTime += totalTime
 }
 
-private fun runOnce(description: String, ut: () -> Unit) {
+private fun runOnce(description: String,  expected: Int? = null, ut: () -> Int) {
     println("🏃‍➡️ [$description] Running result:")
-    println("---------------------------------")
     measureNanoTime {
-        ut.invoke()
+        val result = ut()
+        if (expected != null) {
+            if(result == expected) {
+                println(IDENT + "✅ Solution is ok: $result")
+            } else {
+                println(IDENT + "❌ $result doesn't match expected problem solution $expected")
+            }
+        } else {
+            println(IDENT + "❓ Current solution is:")
+            println(IDENT + "$result")
+        }
     }.also {
-        println("---------------------------------")
         println(String.format("$IDENT⌛ Time: %,7d µs", it / 1000))
     }
 }

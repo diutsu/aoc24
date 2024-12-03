@@ -60,6 +60,7 @@ fun main() {
     runDay( "$day-part2" ) {
         part2(readInput("$day/input"))
     }
+
     stressTest( "$day-part2" , 100, 100) {
         part2(readInput("$day/input"))
     }

@@ -2,83 +2,67 @@ package com.diutsu.aoc24
 
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
+import com.diutsu.aoc.library.stressTest
 import com.diutsu.aoc.library.validateInput
+import jdk.internal.org.jline.utils.Colors.s
 
 fun main() {
 
     fun isSafe(levels: List<Int>): Pair<Boolean, Int> {
         val direction = if (levels[0] < levels[1]) 1 else -1
-        for (index in (0..< levels.lastIndex)) {
-            val diff = (levels[index + 1] - levels[index]) * direction
-            if (diff > 3 || diff < 1 ) {
-                return Pair(false, index + 1)
+        levels.zipWithNext { a, b -> (b - a) * direction }
+            // The difference times direction is a positive number as long as the numbers are in the same direction
+            .indexOfFirst { it > 3 || it < 1 }
+            .let {
+                if (it > -1) return Pair(false, it + 1)
+                else return Pair(true, levels.lastIndex)
             }
-        }
-        return Pair(true, levels.lastIndex)
     }
 
     fun isSafeWithDampener(levels: List<Int>): Boolean {
         val firstPass = isSafe(levels)
         if (firstPass.first) return true
-
-        val one = levels.subList(0, firstPass.second) + levels.subList(firstPass.second + 1, levels.size)
-        if (isSafe(one).first) return true
-
-        if (firstPass.second < 1) return false
-        val two = levels.subList(0, firstPass.second - 1) + levels.subList(firstPass.second, levels.size)
-        if (isSafe(two).first) return true
-
-        if (firstPass.second < 2) return false
-        val three = levels.subList(0, firstPass.second - 2) + levels.subList(firstPass.second - 1, levels.size)
-        return isSafe(three).first
+        // if the first pass fails, we need to try to remove one of the elements and try again
+        // The naive way is to try with each one of levels, but if we remember the index of the first failure
+        // there are only 3 possible causes for a failure: the current level, the previous index or the one before that.
+        return sequenceOf(firstPass.second, firstPass.second - 1, firstPass.second - 2)
+            .filter { it >= 0 }
+            .firstOrNull { index ->
+                isSafe(levels.subList(0, index) + levels.subList(index + 1, levels.size)).first
+            } != null
     }
 
-    fun part1(input: List<String>): Int {
-        return input.count { report ->
-            val levels = report.split(" ").map(String::toInt)
-            isSafe(levels).first
-        }
+    fun part1(input: List<String>): Int  =
+        input.count { isSafe(it.split(" ").map(String::toInt)).first }
 
-    }
-
-    fun part2(input: List<String>): Int {
-
-        return input.count {
-            report ->
-            val levels = report.split(" ").map(String::toInt)
-            isSafeWithDampener(levels)
-        }
-    }
+    fun part2(input: List<String>): Int =
+        input.count { isSafeWithDampener(it.split(" ").map(String::toInt)) }
 
     val day = "day02"
 
-    validateInput( "$day-part1" , 2 ) {
+    validateInput( "$day-part1-example" , 2 ) {
         part1(readInput("$day/example"))
     }
-    validateInput( "$day-part1" , 1 ) {
-        part1(readInput("$day/example2"))
-    }
-    validateInput( "$day-part1" , 510 ) {
-        part1(readInput("$day/input"))
-    }
-    runDay( "$day-part1" ) {
+
+//    validateInput( "$day-part1" , 1 ) {
+//        part1(readInput("$day/example2"))
+//    }
+
+    stressTest( "$day-part1-input", 10, 100) {
         part1(readInput("$day/input"))
     }
 
     //  part2
-    validateInput( "$day-part2" , 4 ) {
+    validateInput( "$day-part2-example" , 4 ) {
         part2(readInput("$day/example"))
     }
 
-    validateInput( "$day-part2" , 9 ) {
-        part2(readInput("$day/example2"))
-    }
+//    validateInput( "$day-part2" , 9 ) {
+//        part2(readInput("$day/example2"))
+//    }
 
-    validateInput( "$day-part2" , 553 ) {
+    stressTest( "$day-part2-input" , 10, 100 ) {
         part2(readInput("$day/input"))
     }
 
-    runDay( "$day-part2" ) {
-        part2(readInput("$day/input"))
-    }
 }

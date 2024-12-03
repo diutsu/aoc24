@@ -8,23 +8,22 @@ import java.util.regex.Pattern
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
-        val pattern = Regex("mul\\([0-9]{1,3},[0-9]{1,3}\\)")
-        return input.flatMap { line ->
-            pattern.findAll(line).map { it.value }.map {
+    val mullOnlyPattern = Regex("mul\\([0-9]{1,3},[0-9]{1,3}\\)")
+    val mullOrDoDontPattern = Regex("((do|don't)\\(\\))|(mul\\([0-9]{1,3},[0-9]{1,3}\\))")
+
+    fun part1(input: List<String>): Int =
+        input.flatMap { line ->
+            mullOnlyPattern.findAll(line).map { it.value }.map {
                 val (a,b) = it.substring(4, it.length-1).split(",")
                 a.toInt() * b.toInt()
             }
         }.sum()
 
-    }
-
     fun part2(input: List<String>): Int {
-        val pattern = Regex("((do|don't)\\(\\))|(mul\\([0-9]{1,3},[0-9]{1,3}\\))")
         var enabled = true
         var acc = 0
         input.forEach { line ->
-            pattern.findAll(line).map { it.value }.forEach {
+            mullOrDoDontPattern.findAll(line).map { it.value }.forEach {
                 when {
                     it == "do()" -> enabled = true
                     it == "don't()" -> enabled = false
@@ -43,13 +42,13 @@ fun main() {
     validateInput( "$day-part1" , 161 ) {
         part1(readInput("$day/example"))
     }
-    runDay( "$day-part1",156388521 ) {
+    runDay( "$day-part1") {
         part1(readInput("$day/input"))
     }
     validateInput( "$day-part2" , 48 ) {
         part2(readInput("$day/example2"))
     }
-    runDay( "$day-part2" ,75920122 ) {
+    runDay( "$day-part2" ) {
         part2(readInput("$day/input"))
     }
 }

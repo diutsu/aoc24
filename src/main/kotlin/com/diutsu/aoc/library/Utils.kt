@@ -7,12 +7,21 @@ import java.nio.file.Paths
 import java.security.MessageDigest
 import java.util.*
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(name: String): List<String> = Path("inputs/aoc24/$name.txt").readText().trim().lines()
+fun readInput(name: String): List<String> {
+    val file = Path("inputs/aoc24/$name.txt")
+    if(file.exists()) {
+        return file.readText().trim().lines()
+    } else {
+        println("📄 File $file doesn't exist, return empty list.")
+        return emptyList()
+    }
+}
 
 fun readInputLines(inputFile: String): List<String> = Files.readAllLines(Paths.get("inputs/aoc23/", inputFile)).toList()
 
@@ -25,7 +34,6 @@ class LineScanner(inputStream: InputStream) : Iterator<String> {
 
     override fun next(): String = scanner.nextLine()
 }
-
 
 /**
  * Converts string to md5 hash.
@@ -62,16 +70,5 @@ fun checkInput(description: String, expectecResult: Int, runnable: () -> Int) {
 }
 
 fun runDay(description: String, expected: Int? = null, runnable: () -> Int) {
-    stressTest( description, warmup = 0, iterations = 0)  {
-        val result = runnable()
-        if (expected != null) {
-            if(result == expected) {
-                println("✅ [$description] Solution is ok: $result")
-            } else {
-                println("❌ [$description] $result doesn't match expected problem solution $expected")
-            }
-        } else {
-            runnable().println()
-        }
-    }
+    stressTest( description, warmup = 0, iterations = 0, expected)  { runnable() }
 }
