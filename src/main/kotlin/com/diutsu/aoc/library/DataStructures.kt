@@ -9,6 +9,56 @@ import kotlin.math.abs
 
 typealias Distance = Long
 
+typealias Matrix<T> = List<List<T>>
+
+fun <T> Matrix<T>.inMatrix(
+    line: Int,
+    column: Int,
+): Boolean {
+    return line in this.indices && column in this.first().indices
+}
+
+fun <T> Matrix<T>.inMatrix(reference: Reference): Boolean {
+    return reference.y in this.indices && reference.x in this.first().indices
+}
+
+operator fun <T> Matrix<T>.get(ref: Reference): T {
+    return this[ref.y][ref.x]
+}
+
+//
+// operator fun <T> Matrix<T>.get(ref: Reference, value: T) {
+//    this[ref.y][ref.x] = T
+// }
+
+val directions4plus =
+    listOf(
+        Reference(-1, 0),
+        Reference(0, 1),
+        Reference(1, 0),
+        Reference(0, -1),
+    )
+
+val directions4x =
+    listOf(
+        Reference(-1, 1),
+        Reference(1, 1),
+        Reference(1, -1),
+        Reference(-1, -1),
+    )
+
+val directions8 =
+    listOf(
+        Reference(-1, 0),
+        Reference(-1, 1),
+        Reference(0, 1),
+        Reference(1, 1),
+        Reference(1, 0),
+        Reference(1, -1),
+        Reference(0, -1),
+        Reference(-1, -1),
+    )
+
 enum class CardinalDirections(val id: Int) {
     NORTH(0),
     EAST(1),
@@ -54,6 +104,10 @@ data class Reference(val x: Int, val y: Int) {
             SOUTH -> Reference(x, y + 1)
             WEST -> Reference(x - 1, y)
         }
+
+    operator fun plus(other: Reference): Reference = Reference(this.x + other.x, this.y + other.y)
+
+    operator fun times(value: Int): Reference = Reference(this.x * value, this.y * value)
 
     fun plusAll() =
         run {

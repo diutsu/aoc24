@@ -2,8 +2,6 @@ package com.diutsu.aoc.library
 
 import java.io.InputStream
 import java.math.BigInteger
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.security.MessageDigest
 import java.util.Scanner
 import kotlin.io.path.Path
@@ -23,9 +21,7 @@ fun readInput(name: String): List<String> {
     }
 }
 
-fun readInputLines(inputFile: String): List<String> = Files.readAllLines(Paths.get("inputs/aoc23/", inputFile)).toList()
-
-fun readFileAsMatrix(inputFile: String): List<List<Char>> = readInputLines(inputFile).map { it.toList() }.toList()
+fun readFileAsMatrix(inputFile: String): Matrix<Char> = readInput(inputFile).map { it.toList() }.toList()
 
 class LineScanner(inputStream: InputStream) : Iterator<String> {
     private val scanner = Scanner(inputStream)
