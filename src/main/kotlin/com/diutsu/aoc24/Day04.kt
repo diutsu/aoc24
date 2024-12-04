@@ -18,20 +18,29 @@ fun main() {
         rows: Int,
         cols: Int,
         input: List<List<Char>>
-    ) = directions8.count { direction ->
-        var matches = true
-        for (i in word.indices) {
-            val newRow = row + direction.y * i
-            val newCol = col + direction.x * i
-            if (0 > newRow || newRow >= rows || 0 > newCol || newCol >= cols
-                || (input[newRow][newCol] != word[i]
-                        )
-            ) {
-                matches = false
-                break
+    ): Int {
+        return directions8.count { direction ->
+            val maxStep = when {
+                direction.y > 0 -> rows - row
+                direction.y < 0 -> row + 1
+                else -> Int.MAX_VALUE
+            }.coerceAtMost(
+                when {
+                    direction.x > 0 -> cols - col
+                    direction.x < 0 -> col + 1
+                    else -> Int.MAX_VALUE
+                }
+            )
+
+            if (maxStep < word.size) return@count false
+
+            for (i in word.indices) {
+                val newRow = row + direction.y * i
+                val newCol = col + direction.x * i
+                if (input[newRow][newCol] != word[i]) return@count false
             }
+            true
         }
-        matches
     }
 
     fun part1(input: List<List<Char>>): Int {
@@ -48,14 +57,24 @@ fun main() {
     }
 
     fun part2(input: List<List<Char>>): Int {
-        val validOption = setOf("MMSS", "SMMS", "SSMM", "MSSM").map { it.toList() }
-        return (1..input.size - 2)
-            .sumOf { l ->
-                (1..input.first().size - 2)
-                    .filter { input[l][it] == 'A' }
-                    .map { c -> directions4x.map { input[it.y + l][it.x + c] } }
-                    .count { corners -> validOption.any { corners == it } }
-            }
+        val validOptions = setOf("MMSS", "SMMS", "SSMM", "MSSM").map { it.toCharArray() }
+
+        val rows = input.size
+        val cols = input.first().size
+
+        return (1 until rows - 1).sumOf { l ->
+            (1 until cols - 1)
+                .filter { input[l][it] == 'A' }
+                .count { c ->
+                    val corners = charArrayOf(
+                        input[l + directions4x[0].y][c + directions4x[0].x],
+                        input[l + directions4x[1].y][c + directions4x[1].x],
+                        input[l + directions4x[2].y][c + directions4x[2].x],
+                        input[l + directions4x[3].y][c + directions4x[3].x]
+                    )
+                    validOptions.any { it.contentEquals(corners) }
+                }
+        }
     }
 
     val day = "day04"
