@@ -1,10 +1,8 @@
 package com.diutsu.aoc24
 
-import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.directions4x
 import com.diutsu.aoc.library.directions8
 import com.diutsu.aoc.library.get
-import com.diutsu.aoc.library.inMatrix
 import com.diutsu.aoc.library.readFileAsMatrix
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
@@ -17,20 +15,21 @@ fun main() {
         col: Int,
         rows: Int,
         cols: Int,
-        input: List<List<Char>>
+        input: List<List<Char>>,
     ): Int {
         return directions8.count { direction ->
-            val maxStep = when {
-                direction.y > 0 -> rows - row
-                direction.y < 0 -> row + 1
-                else -> Int.MAX_VALUE
-            }.coerceAtMost(
+            val maxStep =
                 when {
-                    direction.x > 0 -> cols - col
-                    direction.x < 0 -> col + 1
+                    direction.y > 0 -> rows - row
+                    direction.y < 0 -> row + 1
                     else -> Int.MAX_VALUE
-                }
-            )
+                }.coerceAtMost(
+                    when {
+                        direction.x > 0 -> cols - col
+                        direction.x < 0 -> col + 1
+                        else -> Int.MAX_VALUE
+                    },
+                )
 
             if (maxStep < word.size) return@count false
 
@@ -66,12 +65,13 @@ fun main() {
             (1 until cols - 1)
                 .filter { input[l][it] == 'A' }
                 .count { c ->
-                    val corners = charArrayOf(
-                        input[l + directions4x[0].y][c + directions4x[0].x],
-                        input[l + directions4x[1].y][c + directions4x[1].x],
-                        input[l + directions4x[2].y][c + directions4x[2].x],
-                        input[l + directions4x[3].y][c + directions4x[3].x]
-                    )
+                    val corners =
+                        charArrayOf(
+                            input[l + directions4x[0].y][c + directions4x[0].x],
+                            input[l + directions4x[1].y][c + directions4x[1].x],
+                            input[l + directions4x[2].y][c + directions4x[2].x],
+                            input[l + directions4x[3].y][c + directions4x[3].x],
+                        )
                     validOptions.any { it.contentEquals(corners) }
                 }
         }
