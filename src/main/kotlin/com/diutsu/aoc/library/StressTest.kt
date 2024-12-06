@@ -1,5 +1,10 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package com.diutsu.aoc.library
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.system.measureNanoTime
 
 var totalColdTime = 0L
@@ -48,6 +53,17 @@ fun stressTest(
         runWithStatistics(iterations, ut)
     }
     println()
+}
+
+fun <T> timeIt(message: String = "", block: () -> T) : T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    val start = System.nanoTime()
+    val result = block()
+    val time = System.nanoTime() - start
+    println(String.format( "%s⏱️ %s %,7d  µs", IDENT,  message, time / 1000))
+    return result
 }
 
 private fun runWithStatistics(
