@@ -149,7 +149,9 @@ data class Reference(val x: Int, val y: Int) {
         return abs(x - reference.x) + abs(y - reference.y).toLong()
     }
 
-    fun inside(list: List<List<*>>): Boolean = 0 <= this.y && this.y < list.size && 0 <= this.x && this.x < list.first().size
+    fun inside(list: List<List<*>>): Boolean {
+        return this.y in list.indices && this.x in list.first().indices
+    }
 
     // This might limits the maximum X/Y value, but dramatically improves performance in some scenarions
     override fun hashCode(): Int = x * 512 + y
