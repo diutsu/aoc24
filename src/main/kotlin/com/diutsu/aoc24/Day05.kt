@@ -3,6 +3,7 @@ package com.diutsu.aoc24
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.timeIt
+import com.diutsu.aoc.library.validateInput
 
 fun main() {
     fun printListHighlight(
@@ -80,44 +81,37 @@ fun main() {
         //                }.flatMap { r ->
         //                    r.value.filter { it in invalid }.map { r.key to it }
         //                }
-
-        val invalid = timeIt("Filter Invalid") {
-            updates.mapNotNull { val invalidRules = invalidRules(it, rules)
-                if(invalidRules.isNotEmpty()) it to invalidRules else null
-            }
-        }
-
-        return timeIt("Sort") {
-            invalid.map { (iv, invalidRules) ->
-                val newIv = iv.toMutableList()
-                var newRules = invalidRules
-                do {
-                    println(newRules)
-                    newRules.forEach { rule ->
-                        val newIndex = newIv.indexOf(rule.first)
-                        newIv.remove(rule.second)
-                        newIv.add(newIndex, rule.second)
-                    }
-                    println(newRules)
-                    newRules = invalidRules(newIv, rules)
-                } while ( invalidRules.isNotEmpty() )
-                newIv
-            }
-        }.sumOf { it[it.size / 2] }
+        val invalid = updates.filter { !isValid(it, rules) }
+        return invalid.map { iv ->
+            val newIv = iv.toMutableList()
+            do {
+                val seen = mutableListOf<Int>()
+                val rule =
+                    newIv.mapIndexed { index, i ->
+                        seen += i
+                        val error = rules[i].orEmpty().firstOrNull { it in seen }
+                        i to error
+                    }.first { it.second != null }
+                newIv.remove(rule.second!!)
+                newIv.add(newIv.indexOf(rule.first) + 1, rule.second!!)
+            } while (!isValid(newIv, rules))
+            newIv.toList()
+        }.map { it[it.size / 2] }
+        .sum()
     }
 
     val day = "day05"
 
-//    validateInput("$day-part1", 143) {
-//        part1(readInput("$day/example"))
-//    }
+    validateInput("$day-part1", 143) {
+        part1(readInput("$day/example"))
+    }
 
     runDay("$day-part1", 5064) {
         part1(readInput("$day/input"))
     }
-//    validateInput("$day-part2", 123) {
-//        part2(readInput("$day/example"))
-//    }
+    validateInput("$day-part2", 123) {
+        part2(readInput("$day/example"))
+    }
     runDay("$day-part2",5152) {
         part2(readInput("$day/input"))
     }

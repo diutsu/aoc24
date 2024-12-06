@@ -5,8 +5,6 @@ import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import com.diutsu.aoc.library.mutableMatrix.get
 import com.diutsu.aoc.library.mutableMatrix.set
-import com.diutsu.aoc.library.mutableMatrix.println
-import com.diutsu.aoc.library.println
 import com.diutsu.aoc.library.readFileAsMutableMatrix
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
@@ -24,14 +22,16 @@ fun main() {
     fun walkWithLetteredBreadcrumbs(input: MutableMatrix<Char>, initialPosition: Reference, initialDirection: CardinalDirections): Boolean {
         var position = initialPosition
         var direction = initialDirection
-        var next = position+direction
-        while (next.inside(input)) {
+        var next = position + direction
+        val xIndices = input.first().indices
+        val indices = input.indices
+        while (next.y in indices && next.x in xIndices) {
             when {
-                input[next] == direction.letter() -> return true
+                input[next] == direction.letter -> return true
                 input[next] == '#' -> direction = direction.rotate90()
                 else -> {
                     position = next
-                    input[position] = direction.letter()
+                    input[next] = direction.letter
                 }
             }
             next = position + direction

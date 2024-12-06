@@ -68,11 +68,11 @@ val directions8 =
         Reference(-1, -1),
     )
 
-enum class CardinalDirections(val id: Int) {
-    NORTH(0),
-    EAST(1),
-    SOUTH(2),
-    WEST(3),
+enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy: Int) {
+    NORTH(0,'U', 0, -1),
+    EAST(1,'R', 1, 0),
+    SOUTH(2,'D', 0, 1),
+    WEST(3,'L', -1, 0),
     ;
 
     fun opposite(): CardinalDirections =
@@ -100,13 +100,6 @@ enum class CardinalDirections(val id: Int) {
             WEST -> NORTH
         }
 
-    fun letter() : Char = when (this) {
-        NORTH -> 'U'
-        EAST -> 'R'
-        SOUTH -> 'D'
-        WEST -> 'L'
-    }
-
     companion object {
         fun fromLetter(letter: String): CardinalDirections {
             return when (letter) {
@@ -117,6 +110,25 @@ enum class CardinalDirections(val id: Int) {
                 else -> throw RuntimeException("Invalid direction $letter")
             }
         }
+    }
+}
+
+class Resetable<T>(val initial: T) {
+    var value: T = initial
+    fun reset() {
+        value = initial
+    }
+}
+
+class Walker(var x: Int, var y: Int) {
+    operator fun plus(direction: CardinalDirections): Walker {
+        when (direction) {
+            NORTH -> y -= 1
+            EAST -> x += 1
+            SOUTH -> y += 1
+            WEST -> x -= 1
+        }
+        return this
     }
 }
 
