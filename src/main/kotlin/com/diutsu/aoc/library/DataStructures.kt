@@ -26,6 +26,15 @@ operator fun <T> Matrix<T>.get(ref: Reference): T {
     return this[ref.y][ref.x]
 }
 
+
+
+fun <T> Matrix<T>.println(): Unit {
+    this.forEach {
+        it.println()
+    }
+}
+
+
 //
 // operator fun <T> Matrix<T>.get(ref: Reference, value: T) {
 //    this[ref.y][ref.x] = T
@@ -81,6 +90,21 @@ enum class CardinalDirections(val id: Int) {
             SOUTH -> "S"
             WEST -> "W"
         }
+    }
+
+    fun rotate90(): CardinalDirections =
+        when (this) {
+            NORTH -> EAST
+            EAST -> SOUTH
+            SOUTH -> WEST
+            WEST -> NORTH
+        }
+
+    fun letter() : Char = when (this) {
+        NORTH -> 'U'
+        EAST -> 'R'
+        SOUTH -> 'D'
+        WEST -> 'L'
     }
 
     companion object {

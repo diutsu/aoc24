@@ -1,5 +1,6 @@
 package com.diutsu.aoc.library
 
+import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import java.io.InputStream
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -22,6 +23,7 @@ fun readInput(name: String): List<String> {
 }
 
 fun readFileAsMatrix(inputFile: String): Matrix<Char> = readInput(inputFile).map { it.toList() }.toList()
+fun readFileAsMutableMatrix(inputFile: String): MutableMatrix<Char> = readInput(inputFile).map { it.toMutableList() }.toList()
 
 class LineScanner(inputStream: InputStream) : Iterator<String> {
     private val scanner = Scanner(inputStream)
