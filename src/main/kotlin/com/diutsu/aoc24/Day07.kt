@@ -2,9 +2,7 @@ package com.diutsu.aoc24
 
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
-import com.diutsu.aoc.library.stressTest
 import com.diutsu.aoc.library.validateInput
-import kotlin.math.log10
 import kotlin.math.pow
 
 enum class Operator {
@@ -19,7 +17,6 @@ fun main() {
         goal: Long,
         operators: Set<Operator>,
     ): Any {
-
         fun countDigits(n: Long): Long {
             return when {
                 n < 10L -> 10L
@@ -42,7 +39,10 @@ fun main() {
             }
         }
 
-        fun concatDirect(runningResult: Long, nextValue: Long): Long {
+        fun concatDirect(
+            runningResult: Long,
+            nextValue: Long,
+        ): Long {
             var multiplier = 1L
             var temp = nextValue
             while (temp > 0) {

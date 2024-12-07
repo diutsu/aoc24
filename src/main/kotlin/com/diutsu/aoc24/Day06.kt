@@ -3,11 +3,7 @@ package com.diutsu.aoc24
 import com.diutsu.aoc.library.CardinalDirections
 import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
-import com.diutsu.aoc.library.mutableMatrix.contains
-import com.diutsu.aoc.library.mutableMatrix.get
-import com.diutsu.aoc.library.mutableMatrix.println
 import com.diutsu.aoc.library.mutableMatrix.set
-import com.diutsu.aoc.library.println
 import com.diutsu.aoc.library.readFileAsMutableMatrix
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
@@ -21,71 +17,117 @@ fun main() {
         throw Exception("Initial position not found")
     }
 
-    fun walkWithLetteredBreadcrumbs(
-        input: MutableMatrix<Char>,
-        initialPosition: Reference,
-        initialDirection: CardinalDirections,
-    ): MutableList<Pair<Reference, CardinalDirections>> {
-        var position = initialPosition
-        var direction = initialDirection
-        var next = position + direction
-        val xIndices = input.first().indices
-        val indices = input.indices
-        val visited = mutableListOf<Pair<Reference, CardinalDirections>>()
-        while (next.y in indices && next.x in xIndices) {
-            when {
-                input[next] == direction.letter -> return visited
-                input[next] == '#' -> direction = direction.rotate90()
-                else -> {
-                    position = next
-                    input[next] = direction.letter
-                    visited.add(position to direction)
-                }
-            }
-            next = position + direction
-        }
-        visited.add(next to direction)
-        return visited
-    }
-
+    /**
+     * Follows the input matrix from initial position and direction,
+     *
+     * Returns a list of each visited point and current direction of travel
+     * It turns 90 degrees everytime a '#' is found
+     */
     fun walkWithBreadcrumbs(
         input: MutableMatrix<Char>,
         initialPosition: Reference,
         initialDirection: CardinalDirections,
-    ): MutableMatrix<Char> {
-        walkWithLetteredBreadcrumbs(input, initialPosition, initialDirection)
-        return input
+    ): MutableList<Pair<Reference, CardinalDirections>> {
+        var positionX = initialPosition.x
+        var positionY = initialPosition.y
+        var direction = initialDirection
+        val visited = mutableListOf(Reference(positionX, positionY) to direction)
+        var nextX = positionX + direction.dx
+        var nextY = positionY + direction.dy
+        while (nextX in input.first().indices && nextY in input.indices) {
+            when (input[nextY][nextX]) {
+                direction.letter -> return visited
+                '#' -> direction = direction.rotate90()
+                else -> {
+                    positionY = nextY
+                    positionX = nextX
+                    input[nextY][nextX] = direction.letter
+                    visited.add(Reference(positionX, positionY) to direction)
+                }
+            }
+            nextX = positionX + direction.dx
+            nextY = positionY + direction.dy
+        }
+
+        return visited
     }
+
+    /**
+     * Follows the input matrix from initial position and direction,
+     *
+     * Updates breadcrumbs with each visited point, but not the direction of travel
+     * It turns 90 degrees everytime a '#' is found
+     *
+     * Faster than [walkWithBreadcrumbs] as it only cares about the visited point. Taking 30ms less.
+     */
+    fun fastWalkWithBreadcrumbs(
+        input: MutableMatrix<Char>,
+        initialPosition: Reference,
+        initialDirection: CardinalDirections,
+        height: Int,
+        width: Int,
+        breadcrumbs: MutableList<Reference>
+    ): Boolean {
+        var positionX = initialPosition.x
+        var positionY = initialPosition.y
+        var direction = initialDirection
+        var nextX = positionX + direction.dx
+        var nextY = positionY + direction.dy
+
+        while (nextX in 0 until width && nextY in 0 until height) {
+            when (input[nextY][nextX]) {
+                direction.letter -> return true
+                '#' -> direction = direction.rotate90()
+                else -> {
+                    // Save original state before modifying
+                    val nextPos = Reference(nextX, nextY)
+                    breadcrumbs.add(nextPos)
+                    positionY = nextY
+                    positionX = nextX
+                    input[nextY][nextX] = direction.letter
+                }
+            }
+            nextX = positionX + direction.dx
+            nextY = positionY + direction.dy
+        }
+
+        return false
+    }
+
 
     fun part1(input: MutableMatrix<Char>): Int {
-        walkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirections.NORTH)
+        val changes = mutableListOf<Reference>()
+        fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirections.NORTH, input.size, input.first().size, changes )
+        // marginally faster than doing a distinctBy or a map toSet
         return input.sumOf { line -> line.count { it != '.' && it != '#' } }
     }
-
     fun part2(input: MutableMatrix<Char>): Int {
+
         val position = findInitialPosition(input)
         val direction = CardinalDirections.NORTH
-        val testObstacles =
-            walkWithBreadcrumbs(input.map { it.toMutableList() }, position, direction)
-                .flatMapIndexed { lIndex, l ->
-                    l.mapIndexedNotNull { cIndex, c ->
-                        if (c != '.' && c != '#') Reference(cIndex, lIndex) else null
-                    }
-                }
+        val originalMatrix = input.map { it.toMutableList() } // Copy once for safe modification
+        val testObstacles = walkWithBreadcrumbs(input.map { it.toMutableList() }, position, direction)
+            .distinctBy { it.first }
 
+        val height = input.size
+        val width = input.first().size
+        var nextStart = position
+        var nextDirection = direction
+        val changes = mutableListOf<Reference>()
         return testObstacles.count { obstacle ->
-            val testInput = input.map { it.toMutableList() }
-            testInput[obstacle] = '#'
-
-            val walkResult = walkWithLetteredBreadcrumbs(testInput, position, direction)
-
-            val count = walkResult.last().first in testInput
-
-//            if (count) {
-//                "---".println()
-//                testInput.println()
-//            }
-            count
+            val (obstaclePos, _) = obstacle
+            // Set the obstacle
+            originalMatrix[obstaclePos] = '#'
+            // Prepare to track changes made during fastWalk
+            val walkResult = fastWalkWithBreadcrumbs(originalMatrix, nextStart, nextDirection, height, width, changes)
+            // Revert the obstacle change
+            originalMatrix[obstaclePos.y][obstaclePos.x] = '.'
+            // Revert all changes made during fastWalk
+            changes.forEach {originalMatrix[it.y][it.x] = '.' }
+            changes.clear()
+            nextStart = obstacle.first
+            nextDirection = obstacle.second
+            walkResult
         }
     }
 
@@ -103,7 +145,7 @@ fun main() {
         part2(readFileAsMutableMatrix("$day/example"))
     }
 
-    runDay( "$day-part2", 2165 ) {
+    runDay("$day-part2", 2165) {
         part2(readFileAsMutableMatrix("$day/input"))
     }
 }

@@ -107,6 +107,15 @@ enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy
                 else -> throw RuntimeException("Invalid direction $letter")
             }
         }
+        fun fromLetter(letter: Char): CardinalDirections {
+            return when (letter) {
+                'U' -> NORTH
+                'R' -> EAST
+                'D' -> SOUTH
+                'L' -> WEST
+                else -> throw RuntimeException("Invalid direction $letter")
+            }
+        }
     }
 }
 
