@@ -81,5 +81,5 @@ fun runDay(
     expected: Number? = null,
     runnable: () -> Number,
 ) {
-    stressTest(description, warmup = 0, iterations = 0, expected) { runnable() }
+    stressTest(description, expected = expected, warmup = 0, iterations = 0) { runnable() }
 }

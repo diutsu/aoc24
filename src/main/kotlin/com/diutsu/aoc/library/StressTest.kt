@@ -14,9 +14,9 @@ private val IDENT = "      "
 
 fun stressTest(
     description: String,
-    warmup: Int = 0,
-    iterations: Int = 0,
     expected: Number? = null,
+    warmup: Int = 10,
+    iterations: Int = 1000,
     ut: () -> Number,
 ) {
     if (warmup == 0 && iterations == 0) {

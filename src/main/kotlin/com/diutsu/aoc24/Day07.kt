@@ -2,6 +2,7 @@ package com.diutsu.aoc24
 
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
+import com.diutsu.aoc.library.stressTest
 import com.diutsu.aoc.library.validateInput
 import kotlin.math.log10
 import kotlin.math.pow
@@ -18,6 +19,39 @@ fun main() {
         goal: Long,
         operators: Set<Operator>,
     ): Any {
+
+        fun countDigits(n: Long): Long {
+            return when {
+                n < 10L -> 10L
+                n < 100L -> 100L
+                n < 1000L -> 1000L
+                n < 10000L -> 10000L
+                n < 100000L -> 100000L
+                n < 1000000L -> 1000000L
+                n < 10000000L -> 10000000L
+                n < 100000000L -> 100000000L
+                n < 1000000000L -> 1000000000L
+                n < 10000000000L -> 10000000000L
+                n < 100000000000L -> 100000000000L
+                n < 1000000000000L -> 1000000000000L
+                n < 10000000000000L -> 10000000000000L
+                n < 100000000000000L -> 100000000000000L
+                else -> {
+                    10.0.pow(n.toString().length).toLong() // fallback for larger numbers
+                }
+            }
+        }
+
+        fun concatDirect(runningResult: Long, nextValue: Long): Long {
+            var multiplier = 1L
+            var temp = nextValue
+            while (temp > 0) {
+                multiplier *= 10
+                temp /= 10
+            }
+            return runningResult * multiplier + nextValue
+        }
+
         fun dfs(
             index: Int,
             runningResult: Long,
@@ -29,10 +63,8 @@ fun main() {
             for (operator in operators) {
                 val result =
                     when (operator) {
-                        Operator.CONCAT -> {
-                            val digits = if (nextValue == 0L) 1 else (log10(nextValue.toDouble()).toInt() + 1)
-                            runningResult * 10.0.pow(digits).toLong() + nextValue
-                        }
+                        Operator.CONCAT -> runningResult * countDigits(nextValue) + nextValue
+//                        Operator.CONCAT -> concatDirect(runningResult, nextValue)
                         Operator.PLUS -> runningResult + nextValue
                         Operator.TIMES -> runningResult * nextValue
                     }
@@ -50,8 +82,8 @@ fun main() {
         return input.sumOf { line ->
             val (goal, values) =
                 line.split(": ")
-                    .let { (goal, values) -> goal.toLong() to values.split(" ").map(String::toLong) }
-            if (testValue(values, goal, operators) == goal) goal else 0
+                    .let { (goal, values) -> goal.toLong() to values.split(" ") }
+            if (testValue(values.map(String::toLong), goal, operators) == goal) goal else 0
         }
     }
 
@@ -60,8 +92,8 @@ fun main() {
         return input.sumOf { line ->
             val (goal, values) =
                 line.split(": ")
-                    .let { (goal, values) -> goal.toLong() to values.split(" ").map(String::toLong) }
-            if (testValue(values, goal, operators) == goal) goal else 0
+                    .let { (goal, values) -> goal.toLong() to values.split(" ") }
+            if (testValue(values.map(String::toLong), goal, operators) == goal) goal else 0
         }
     }
 

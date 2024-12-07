@@ -81,10 +81,10 @@ fun main() {
 
             val count = walkResult.last().first in testInput
 
-            if (count) {
-                "---".println()
-                testInput.println()
-            }
+//            if (count) {
+//                "---".println()
+//                testInput.println()
+//            }
             count
         }
     }
@@ -103,7 +103,7 @@ fun main() {
         part2(readFileAsMutableMatrix("$day/example"))
     }
 
-//    runDay( "$day-part2", 2165 ) {
-//        part2(readFileAsMutableMatrix("$day/input"))
-//    }
+    runDay( "$day-part2", 2165 ) {
+        part2(readFileAsMutableMatrix("$day/input"))
+    }
 }
