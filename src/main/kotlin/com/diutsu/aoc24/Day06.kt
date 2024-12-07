@@ -4,7 +4,10 @@ import com.diutsu.aoc.library.CardinalDirections
 import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import com.diutsu.aoc.library.mutableMatrix.get
+import com.diutsu.aoc.library.mutableMatrix.println
+import com.diutsu.aoc.library.mutableMatrix.contains
 import com.diutsu.aoc.library.mutableMatrix.set
+import com.diutsu.aoc.library.println
 import com.diutsu.aoc.library.readFileAsMutableMatrix
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
@@ -19,24 +22,27 @@ fun main() {
         throw Exception("Initial position not found")
     }
 
-    fun walkWithLetteredBreadcrumbs(input: MutableMatrix<Char>, initialPosition: Reference, initialDirection: CardinalDirections): Boolean {
+    fun walkWithLetteredBreadcrumbs(input: MutableMatrix<Char>, initialPosition: Reference, initialDirection: CardinalDirections): MutableList<Pair<Reference, CardinalDirections>> {
         var position = initialPosition
         var direction = initialDirection
         var next = position + direction
         val xIndices = input.first().indices
         val indices = input.indices
+        val visited = mutableListOf<Pair<Reference,CardinalDirections>>()
         while (next.y in indices && next.x in xIndices) {
             when {
-                input[next] == direction.letter -> return true
+                input[next] == direction.letter -> return visited
                 input[next] == '#' -> direction = direction.rotate90()
                 else -> {
                     position = next
                     input[next] = direction.letter
+                    visited.add(position to direction)
                 }
             }
             next = position + direction
         }
-        return false
+        visited.add(next to direction)
+        return visited
     }
 
     fun walkWithBreadcrumbs(input: MutableMatrix<Char>, initialPosition: Reference, initialDirection: CardinalDirections): MutableMatrix<Char> {
@@ -61,11 +67,18 @@ fun main() {
         }
 
         return testObstacles.count {obstacle ->
-            if(input[obstacle] == '.') {
-                val testInput = input.map { it.toMutableList() }
-                testInput[obstacle] = '#'
-                walkWithLetteredBreadcrumbs(testInput, position, direction)
-            } else false
+            val testInput = input.map { it.toMutableList() }
+            testInput[obstacle] = '#'
+
+            val walkResult = walkWithLetteredBreadcrumbs(testInput, position, direction)
+
+            val count = walkResult.last().first in testInput
+
+            if(count) {
+                "---".println()
+                testInput.println()
+            }
+            count
         }
     }
 
@@ -83,7 +96,7 @@ fun main() {
         part2(readFileAsMutableMatrix("$day/example"))
     }
 
-    runDay( "$day-part2", 2165 ) {
-        part2(readFileAsMutableMatrix("$day/input"))
-    }
+//    runDay( "$day-part2", 2165 ) {
+//        part2(readFileAsMutableMatrix("$day/input"))
+//    }
 }
