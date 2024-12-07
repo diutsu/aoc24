@@ -26,14 +26,11 @@ operator fun <T> Matrix<T>.get(ref: Reference): T {
     return this[ref.y][ref.x]
 }
 
-
-
-fun <T> Matrix<T>.println(): Unit {
+fun <T> Matrix<T>.println() {
     this.forEach {
         it.println()
     }
 }
-
 
 //
 // operator fun <T> Matrix<T>.get(ref: Reference, value: T) {
@@ -69,10 +66,10 @@ val directions8 =
     )
 
 enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy: Int) {
-    NORTH(0,'U', 0, -1),
-    EAST(1,'R', 1, 0),
-    SOUTH(2,'D', 0, 1),
-    WEST(3,'L', -1, 0),
+    NORTH(0, 'U', 0, -1),
+    EAST(1, 'R', 1, 0),
+    SOUTH(2, 'D', 0, 1),
+    WEST(3, 'L', -1, 0),
     ;
 
     fun opposite(): CardinalDirections =
@@ -115,6 +112,7 @@ enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy
 
 class Resetable<T>(val initial: T) {
     var value: T = initial
+
     fun reset() {
         value = initial
     }

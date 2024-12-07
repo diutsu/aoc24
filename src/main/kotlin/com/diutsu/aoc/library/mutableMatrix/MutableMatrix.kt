@@ -4,7 +4,6 @@ import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.Walker
 import com.diutsu.aoc.library.println
 
-
 typealias MutableMatrix<T> = List<MutableList<T>>
 
 class FlatMatrix<T>(input: MutableMatrix<T>) {
@@ -13,7 +12,7 @@ class FlatMatrix<T>(input: MutableMatrix<T>) {
     private val height: Int = input.size
 
     constructor(data: List<T>, width: Int, height: Int) : this(
-        List(height) { y -> data.subList(y * width, (y + 1) * width).toMutableList() }
+        List(height) { y -> data.subList(y * width, (y + 1) * width).toMutableList() },
     )
 
     operator fun get(ref: Reference): T {
@@ -21,7 +20,10 @@ class FlatMatrix<T>(input: MutableMatrix<T>) {
         return data[index]
     }
 
-    operator fun set(ref: Reference, value: T) {
+    operator fun set(
+        ref: Reference,
+        value: T,
+    ) {
         val index = ref.y * width + ref.x
         data[index] = value
     }
@@ -39,23 +41,29 @@ operator fun <T> MutableMatrix<T>.get(ref: Reference): T {
     return this[ref.y][ref.x]
 }
 
-operator fun <T> MutableMatrix<T>.set(ref: Reference, value: T)  {
+operator fun <T> MutableMatrix<T>.set(
+    ref: Reference,
+    value: T,
+) {
     this[ref.y][ref.x] = value
 }
 
-operator fun <T> MutableMatrix<T>.set(ref: Walker, value: T)  {
+operator fun <T> MutableMatrix<T>.set(
+    ref: Walker,
+    value: T,
+) {
     this[ref.y][ref.x] = value
 }
 
 operator fun <T> MutableMatrix<T>.get(ref: Walker): T {
     return this[ref.y][ref.x]
 }
+
 operator fun <T> MutableMatrix<T>.contains(ref: Reference): Boolean {
     return ref.y in this.indices && ref.x in this.first().indices
 }
 
-
-fun <T> MutableMatrix<T>.println(): Unit {
+fun <T> MutableMatrix<T>.println() {
     this.forEach {
         it.joinToString("").println()
     }

@@ -16,8 +16,8 @@ fun stressTest(
     description: String,
     warmup: Int = 0,
     iterations: Int = 0,
-    expected: Int? = null,
-    ut: () -> Int,
+    expected: Number? = null,
+    ut: () -> Number,
 ) {
     if (warmup == 0 && iterations == 0) {
         runOnce(description, expected, ut)
@@ -55,20 +55,23 @@ fun stressTest(
     println()
 }
 
-fun <T> timeIt(message: String = "", block: () -> T) : T {
+fun <T> timeIt(
+    message: String = "",
+    block: () -> T,
+): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     val start = System.nanoTime()
     val result = block()
     val time = System.nanoTime() - start
-    println(String.format( "%s⏱️ %s %,7d  µs", IDENT,  message, time / 1000))
+    println(String.format("%s⏱️ %s %,7d  µs", IDENT, message, time / 1000))
     return result
 }
 
 private fun runWithStatistics(
     iterations: Int,
-    ut: () -> Int,
+    ut: () -> Number,
 ) {
     val times = mutableListOf<Long>()
 
@@ -100,8 +103,8 @@ private fun runWithStatistics(
 
 private fun runOnce(
     description: String,
-    expected: Int? = null,
-    ut: () -> Int,
+    expected: Number? = null,
+    ut: () -> Number,
 ) {
     println("🏃‍➡️ [$description] Running result:")
     measureNanoTime {

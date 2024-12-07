@@ -23,6 +23,7 @@ fun readInput(name: String): List<String> {
 }
 
 fun readFileAsMatrix(inputFile: String): Matrix<Char> = readInput(inputFile).map { it.toList() }.toList()
+
 fun readFileAsMutableMatrix(inputFile: String): MutableMatrix<Char> = readInput(inputFile).map { it.toMutableList() }.toList()
 
 class LineScanner(inputStream: InputStream) : Iterator<String> {
@@ -48,13 +49,13 @@ fun Any?.println() = println(this)
 
 fun validateInput(
     description: String,
-    expectecResult: Int,
-    runnable: () -> Int,
+    expectedResult: Number,
+    runnable: () -> Number,
 ) {
     try {
         val testResult = runnable()
-        if (testResult != expectecResult) {
-            println("❌ [$description] Test input from file: $testResult doesn't match $expectecResult")
+        if (testResult != expectedResult) {
+            println("❌ [$description] Test input from file: $testResult doesn't match $expectedResult")
         } else {
             println("✅ [$description] Test ok")
         }
@@ -77,8 +78,8 @@ fun checkInput(
 
 fun runDay(
     description: String,
-    expected: Int? = null,
-    runnable: () -> Int,
+    expected: Number? = null,
+    runnable: () -> Number,
 ) {
     stressTest(description, warmup = 0, iterations = 0, expected) { runnable() }
 }

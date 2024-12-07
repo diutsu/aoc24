@@ -64,18 +64,19 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-
-        val rules = timeIt("read rules"){
+        val rules =
+            timeIt("read rules") {
                 input
                     .takeWhile { '|' in it }
                     .map { it.split("|").let { (a, b) -> a.toInt() to b.toInt() } }
                     .groupBy({ it.first }, { it.second })
-        }
+            }
 
-        val updates = timeIt("read updates") {
-            input.takeLastWhile { !it.contains("|") }.filter { it.isNotEmpty() }
-                .map { line -> line.split(",").map { it.toInt() } }
-        }
+        val updates =
+            timeIt("read updates") {
+                input.takeLastWhile { !it.contains("|") }.filter { it.isNotEmpty() }
+                    .map { line -> line.split(",").map { it.toInt() } }
+            }
         //                val applicableRules = rules.filter {
         //                    it.key in invalid
         //                }.flatMap { r ->
@@ -97,7 +98,7 @@ fun main() {
             } while (!isValid(newIv, rules))
             newIv.toList()
         }.map { it[it.size / 2] }
-        .sum()
+            .sum()
     }
 
     val day = "day05"
@@ -112,7 +113,7 @@ fun main() {
     validateInput("$day-part2", 123) {
         part2(readInput("$day/example"))
     }
-    runDay("$day-part2",5152) {
+    runDay("$day-part2", 5152) {
         part2(readInput("$day/input"))
     }
 }
