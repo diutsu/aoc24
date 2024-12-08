@@ -149,7 +149,7 @@ data class Reference(val x: Int, val y: Int) {
         }
 
     operator fun plus(other: Reference): Reference = Reference(this.x + other.x, this.y + other.y)
-
+    operator fun minus(other: Reference): Reference = Reference(this.x - other.x, this.y - other.y)
     operator fun times(value: Int): Reference = Reference(this.x * value, this.y * value)
 
     fun plusAll() =
