@@ -7,50 +7,10 @@ import com.diutsu.aoc.library.validateInput
 fun main() {
 
     fun part1(input: List<String>): Long {
-        val fragmented = input.first().split("").filter { it.isNotEmpty() }.map { it.toInt() }.toMutableList()
-
-        var checksum = 0L
-        var diskIndex = 0
-        var fileID = 0
-        var lastFileID = fragmented.size / 2
-        var isFile = true
-        var fragmentingFileSize = 0
-        var fragmentingFileId = 0
-        while(fragmented.isNotEmpty()) {
-            val blockLength = fragmented.removeFirst()
-            if (isFile) {
-                checksum += fileID * (diskIndex * blockLength + blockLength * (blockLength - 1) / 2L)
-                diskIndex += blockLength
-                fileID++
-            } else {
-                var spaceLength = blockLength
-                while (spaceLength > 0) {
-                    if (fragmentingFileSize == 0) {
-                        fragmentingFileSize = fragmented.removeLast()
-                        fragmented.removeLast() // and a free space
-                        fragmentingFileId = lastFileID
-                        lastFileID--
-                    }
-                    val fill = if (spaceLength > fragmentingFileSize) fragmentingFileSize else spaceLength
-                    fragmentingFileSize -= fill
-                    checksum += fragmentingFileId * (diskIndex * fill + fill * (fill - 1) / 2L)
-                    diskIndex += fill
-                    spaceLength -= fill
-                }
-            }
-            isFile = !isFile
-        }
-        // Process any remaining fragmented file
-        if (fragmentingFileSize > 0) {
-            checksum += fragmentingFileId * (diskIndex * fragmentingFileSize + fragmentingFileSize * (fragmentingFileSize - 1) / 2L)
-        }
-        return checksum
-    }
-
-    fun part2(input: List<String>): Long {
-        val fragmented = input.first().split("").filter { it.isNotEmpty() }.mapIndexed { index, count ->
-            Triple(count.toInt(), index / 2, index % 2 == 0)
+        val fragmented = input.first().mapIndexedNotNull { index, char ->
+            Triple(char.digitToInt(), index / 2, index % 2 == 0)
         }.toMutableList()
+
         var checksum = 0L
         var diskIndex = 0
         while(fragmented.isNotEmpty()) {
@@ -59,16 +19,68 @@ fun main() {
                 checksum += blockId * (diskIndex * blockLength + blockLength * (blockLength - 1) / 2L)
                 diskIndex += blockLength
             } else {
-                val toRemap = fragmented.indexOfLast { it.first <= blockLength && it.third }
-                if (toRemap >= 0) {
-                    val (fill, fillId, _) = fragmented[toRemap]
-                    fragmented[toRemap] = Triple(fill, fillId, false)
-                    checksum += fillId * (diskIndex * fill + fill * (fill - 1) / 2L)
-                    diskIndex += fill
-                    val remaining = blockLength - fill
-                    if (remaining > 0) fragmented.addFirst(Triple(remaining, 0, false))
-                } else {
-                    diskIndex += blockLength
+                var space = blockLength
+                while( space > 0 ) {
+                    val (fill, fillId, _) = fragmented.removeLast()
+                    val consume = if (space > fill) {
+                        fragmented.removeLast()
+                        fill
+                    } else {
+                        fragmented.addLast(Triple(fill - space, fillId, true))
+                        space
+                    }
+                    checksum += fillId * (diskIndex * consume + consume * (consume - 1) / 2L)
+                    diskIndex += consume
+                    space -= consume
+                }
+            }
+        }
+        return checksum
+    }
+
+    val cache = IntArray(10) { Int.MAX_VALUE } // Cache indexed by block size
+
+    fun findLastFileOfSize(
+        fragmented: MutableList<Triple<Int, Int, Boolean>>,
+        blockLength: Int
+    ): Int {
+        val search =  fragmented.size -1
+        for (i in search downTo 0) {
+            val (spaceSize, _, isFile) = fragmented[i]
+            if (isFile && spaceSize <= blockLength) {
+               return i
+            }
+        }
+        return -1
+    }
+
+    fun part2(input: List<String>): Long {
+        val fragmented = input.first().mapIndexedNotNull { index, char ->
+            Triple(char.digitToInt(), index / 2, index % 2 == 0) // size, id, isFile
+        }.toMutableList()
+
+        var checksum = 0L
+        var diskIndex = 0
+        while (fragmented.isNotEmpty()) {
+            val (blockLength, blockId, blockIsFile) = fragmented.removeFirst()
+            if (blockIsFile) {
+                checksum += blockId * (diskIndex * blockLength + blockLength * (blockLength - 1) / 2L)
+                diskIndex += blockLength
+
+            } else {
+                var remaining = blockLength
+                while(remaining >0 ) {
+                    val toRemap = findLastFileOfSize(fragmented, remaining)
+                    if (toRemap < 0) {
+                        diskIndex += remaining
+                        remaining = -1
+                    } else {
+                        val (fill, fillId, _) = fragmented[toRemap]
+                        fragmented[toRemap] = Triple(fill, fillId, false)
+                        checksum += fillId * (diskIndex * fill + fill * (fill - 1) / 2L)
+                        diskIndex += fill
+                        remaining -= fill
+                    }
                 }
             }
         }
