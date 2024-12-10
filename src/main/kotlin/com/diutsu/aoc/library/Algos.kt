@@ -7,21 +7,42 @@ import java.util.ArrayDeque
  *
  * @return visitedSet
  */
-fun <T> graphTraverseDfs(
+fun <T,U> graphTraverseDfs(
     start: T,
-    graph: MutableMap<T, MutableSet<T>>,
-): MutableSet<T> {
-    val toVisit = ArrayDeque<T>().apply { add(start) }
-    val visited = mutableSetOf(start)
+    graph: U,
+    neighbours: (T, U, Set<T>) -> Collection<T>,
+): Set<T> {
+    val toVisit = ArrayDeque<T>()
+        .apply { add(start!!) }
+    val visited = mutableSetOf<T>()
 
     while (toVisit.isNotEmpty()) {
-        val visiting = toVisit.pop()
+        val visiting = toVisit.removeLast()
         if (visiting !in visited) {
             visited += visiting
-            toVisit.addAll(graph[visiting]!! - visited)
+            toVisit.addAll(neighbours(visiting, graph, visited))
         }
     }
     return visited
+}
+
+fun <T,U> graphTraverseGeneric(
+    start: T,
+    graph: U,
+    neighbours: (T, U) -> Collection<T>,
+    isEnd: (T, U) -> Boolean,
+    acc: (T) -> Unit
+) {
+    val toVisit = ArrayDeque<T>()
+        .apply { add(start!!) }
+    while (toVisit.isNotEmpty()) {
+        val visiting = toVisit.removeLast()
+        if (isEnd(visiting, graph) ) {
+            acc(visiting)
+            continue
+        }
+        toVisit.addAll(neighbours(visiting, graph))
+    }
 }
 
 /**
@@ -45,8 +66,6 @@ fun <T> graphTraverseBfs(
     }
     return visited
 }
-
-
 
 fun gcd( a:Int, b:Int): Int {
     return if(b == 0) a else gcd(b, a % b)

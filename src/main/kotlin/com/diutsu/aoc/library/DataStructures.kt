@@ -152,6 +152,8 @@ data class Reference(val x: Int, val y: Int) {
     operator fun minus(other: Reference): Reference = Reference(this.x - other.x, this.y - other.y)
     operator fun times(value: Int): Reference = Reference(this.x * value, this.y * value)
 
+    fun stepAll() =
+        CardinalDirections.entries.map { this + it }.toSet()
     fun plusAll() =
         run {
             val ref = this
