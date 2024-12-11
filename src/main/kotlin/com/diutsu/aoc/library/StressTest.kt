@@ -32,7 +32,7 @@ fun stressTest(
     measureNanoTime {
         val result = ut()
         if (expected != null) {
-            if (result == expected) {
+            if (result.toLong() == expected.toLong()) {
                 println(IDENT + "Solution:   $result ✅")
             } else {
                 println(IDENT + "Solution:   $result ❌ expected $expected")
@@ -110,7 +110,7 @@ private fun runOnce(
     measureNanoTime {
         val result = ut()
         if (expected != null) {
-            if (result == expected) {
+            if (result.toLong() == expected.toLong()) {
                 println(IDENT + "✅ Solution is ok: $result")
             } else {
                 println(IDENT + "❌ $result doesn't match expected problem solution $expected")

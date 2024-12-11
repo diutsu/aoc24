@@ -66,7 +66,7 @@ fun main() {
         initialDirection: CardinalDirections,
         height: Int,
         width: Int,
-        breadcrumbs: MutableList<Reference>
+        breadcrumbs: MutableList<Reference>,
     ): Boolean {
         var positionX = initialPosition.x
         var positionY = initialPosition.y
@@ -94,20 +94,20 @@ fun main() {
         return false
     }
 
-
     fun part1(input: MutableMatrix<Char>): Int {
         val changes = mutableListOf<Reference>()
-        fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirections.NORTH, input.size, input.first().size, changes )
+        fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirections.NORTH, input.size, input.first().size, changes)
         // marginally faster than doing a distinctBy or a map toSet
         return input.sumOf { line -> line.count { it != '.' && it != '#' } }
     }
-    fun part2(input: MutableMatrix<Char>): Int {
 
+    fun part2(input: MutableMatrix<Char>): Int {
         val position = findInitialPosition(input)
         val direction = CardinalDirections.NORTH
         val originalMatrix = input.map { it.toMutableList() } // Copy once for safe modification
-        val testObstacles = walkWithBreadcrumbs(input.map { it.toMutableList() }, position, direction)
-            .distinctBy { it.first }
+        val testObstacles =
+            walkWithBreadcrumbs(input.map { it.toMutableList() }, position, direction)
+                .distinctBy { it.first }
 
         val height = input.size
         val width = input.first().size
@@ -123,7 +123,7 @@ fun main() {
             // Revert the obstacle change
             originalMatrix[obstaclePos.y][obstaclePos.x] = '.'
             // Revert all changes made during fastWalk
-            changes.forEach {originalMatrix[it.y][it.x] = '.' }
+            changes.forEach { originalMatrix[it.y][it.x] = '.' }
             changes.clear()
             nextStart = obstacle.first
             nextDirection = obstacle.second

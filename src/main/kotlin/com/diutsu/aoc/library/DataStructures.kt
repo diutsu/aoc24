@@ -107,6 +107,7 @@ enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy
                 else -> throw RuntimeException("Invalid direction $letter")
             }
         }
+
         fun fromLetter(letter: Char): CardinalDirections {
             return when (letter) {
                 'U' -> NORTH
@@ -149,11 +150,13 @@ data class Reference(val x: Int, val y: Int) {
         }
 
     operator fun plus(other: Reference): Reference = Reference(this.x + other.x, this.y + other.y)
+
     operator fun minus(other: Reference): Reference = Reference(this.x - other.x, this.y - other.y)
+
     operator fun times(value: Int): Reference = Reference(this.x * value, this.y * value)
 
-    fun stepAll() =
-        CardinalDirections.entries.map { this + it }.toSet()
+    fun stepAll() = CardinalDirections.entries.map { this + it }.toSet()
+
     fun plusAll() =
         run {
             val ref = this

@@ -7,10 +7,8 @@ import com.diutsu.aoc.library.graphTraverseGeneric
 import com.diutsu.aoc.library.readFileAsMatrix
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
-import java.util.ArrayDeque
 
 fun main() {
-
     val neighbours: (Reference, Matrix<Char>) -> List<Reference> = { visiting, graph ->
         val expectedNext = graph[visiting.y][visiting.x] + 1
         visiting.plusAll().values.filter {
@@ -48,35 +46,35 @@ fun main() {
 
     val day = "day10"
 
-    validateInput( "$day-part1" , 2 ) {
+    validateInput("$day-part1", 2) {
         part1(readFileAsMatrix("$day/example"))
     }
 
-    validateInput( "$day-part1" , 4 ) {
+    validateInput("$day-part1", 4) {
         part1(readFileAsMatrix("$day/example2"))
     }
-    validateInput( "$day-part1" , 3 ) {
+    validateInput("$day-part1", 3) {
         part1(readFileAsMatrix("$day/example3"))
     }
-    validateInput( "$day-part1" , 36 ) {
+    validateInput("$day-part1", 36) {
         part1(readFileAsMatrix("$day/example4"))
     }
-    runDay( "$day-part1" , 717) {
+    runDay("$day-part1", 717) {
         part1(readFileAsMatrix("$day/input"))
     }
-    validateInput( "$day-part1" , 3 ) {
+    validateInput("$day-part1", 3) {
         part2(readFileAsMatrix("$day/example5"))
     }
-    validateInput( "$day-part1" , 13 ) {
+    validateInput("$day-part1", 13) {
         part2(readFileAsMatrix("$day/example2"))
     }
-    validateInput( "$day-part1" , 81 ) {
+    validateInput("$day-part1", 81) {
         part2(readFileAsMatrix("$day/example4"))
     }
-    validateInput( "$day-part1" , 227 ) {
+    validateInput("$day-part1", 227) {
         part2(readFileAsMatrix("$day/example6"))
     }
-    runDay( "$day-part2" , 1686) {
+    runDay("$day-part2", 1686) {
         part2(readFileAsMatrix("$day/input"))
     }
 }

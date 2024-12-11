@@ -1,14 +1,17 @@
 package com.diutsu.aoc24
 
 import com.diutsu.aoc.library.Reference
+import com.diutsu.aoc.library.listString.contains
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
-import com.diutsu.aoc.library.listString.contains
 import com.diutsu.aoc.library.validateInput
 
 fun main() {
-
-    fun calculateAntinodes(antennas: Map<Char, List<Reference>>, input:List<String>, harmonics : Boolean = false): MutableSet<Reference> {
+    fun calculateAntinodes(
+        antennas: Map<Char, List<Reference>>,
+        input: List<String>,
+        harmonics: Boolean = false,
+    ): MutableSet<Reference> {
         val antinodes = mutableSetOf<Reference>()
         antennas.forEach { (letter, references) ->
             for (first in references) {
@@ -20,13 +23,13 @@ fun main() {
 //                    val dy = (second.x - first.x)
 //                    val gcd = gcd(dx, dy)
 //                    val minDist = Reference( (second.x - first.x)/ gcd, (second.y - first.y)/ gcd)
-                    if(harmonics) {
+                    if (harmonics) {
                         val directions = listOf(-1, 1)
                         directions.forEach { direction ->
-                            var currentRef  = first // itself is an harmonic, plus distance gets to [second]
-                            while (currentRef  in input) {
-                                antinodes.add(currentRef )
-                                currentRef  += distance * direction
+                            var currentRef = first // itself is an harmonic, plus distance gets to [second]
+                            while (currentRef in input) {
+                                antinodes.add(currentRef)
+                                currentRef += distance * direction
                             }
                         }
                     } else {
@@ -56,14 +59,17 @@ fun main() {
 
     fun printMapWithAntinodes(
         input: List<String>,
-        antinodes: MutableSet<Reference>
+        antinodes: MutableSet<Reference>,
     ) {
         input.forEachIndexed { lIndex, line ->
             line.forEachIndexed { cIndex, letter ->
-                if(letter != '.') print(letter)
-                else if (antinodes.contains(Reference(lIndex, cIndex)))
+                if (letter != '.') {
+                    print(letter)
+                } else if (antinodes.contains(Reference(lIndex, cIndex))) {
                     print("#")
-                else print(letter)
+                } else {
+                    print(letter)
+                }
             }
             println()
         }
@@ -75,7 +81,6 @@ fun main() {
         }
     }
 
-
     fun part2(input: List<String>): Int {
         return parseAntennas(input).let { antennas ->
             calculateAntinodes(antennas, input, true).count()
@@ -84,20 +89,20 @@ fun main() {
 
     val day = "day08"
 
-    validateInput( "$day-part1" , 14 ) {
+    validateInput("$day-part1", 14) {
         part1(readInput("$day/example"))
     }
-    runDay( "$day-part1" , 269) {
+    runDay("$day-part1", 269) {
         part1(readInput("$day/input"))
     }
-    validateInput( "$day-part2" , 34 ) {
+    validateInput("$day-part2", 34) {
         part2(readInput("$day/example"))
     }
-    validateInput( "$day-part2" , 9 ) {
+    validateInput("$day-part2", 9) {
         part2(readInput("$day/example2"))
     }
     // 949 too low
-    runDay( "$day-part2", 949 ) {
+    runDay("$day-part2", 949) {
         part2(readInput("$day/input"))
     }
 }

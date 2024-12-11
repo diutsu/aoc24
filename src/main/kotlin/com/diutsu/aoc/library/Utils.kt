@@ -54,7 +54,7 @@ fun validateInput(
 ) {
     try {
         val testResult = runnable()
-        if (testResult != expectedResult) {
+        if (testResult.toLong() != expectedResult.toLong()) {
             println("❌ [$description] Test input from file: $testResult doesn't match $expectedResult")
         } else {
             println("✅ [$description] Test ok")

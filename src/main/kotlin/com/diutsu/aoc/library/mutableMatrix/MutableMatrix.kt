@@ -6,7 +6,6 @@ import com.diutsu.aoc.library.println
 
 typealias MutableMatrix<T> = List<MutableList<T>>
 
-
 class FlatMatrix<T>(input: MutableMatrix<T>) {
     private val data: MutableList<T> = input.flatten().toMutableList()
     private val width: Int = input.first().size

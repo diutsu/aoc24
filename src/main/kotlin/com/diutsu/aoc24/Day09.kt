@@ -5,30 +5,31 @@ import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
 
 fun main() {
-
     fun part1(input: List<String>): Long {
-        val fragmented = input.first().mapIndexedNotNull { index, char ->
-            Triple(char.digitToInt(), index / 2, index % 2 == 0)
-        }.toMutableList()
+        val fragmented =
+            input.first().mapIndexedNotNull { index, char ->
+                Triple(char.digitToInt(), index / 2, index % 2 == 0)
+            }.toMutableList()
 
         var checksum = 0L
         var diskIndex = 0
-        while(fragmented.isNotEmpty()) {
+        while (fragmented.isNotEmpty()) {
             val (blockLength, blockId, blockIsFile) = fragmented.removeFirst()
             if (blockIsFile) {
                 checksum += blockId * (diskIndex * blockLength + blockLength * (blockLength - 1) / 2L)
                 diskIndex += blockLength
             } else {
                 var space = blockLength
-                while( space > 0 ) {
+                while (space > 0) {
                     val (fill, fillId, _) = fragmented.removeLast()
-                    val consume = if (space > fill) {
-                        fragmented.removeLast()
-                        fill
-                    } else {
-                        fragmented.addLast(Triple(fill - space, fillId, true))
-                        space
-                    }
+                    val consume =
+                        if (space > fill) {
+                            fragmented.removeLast()
+                            fill
+                        } else {
+                            fragmented.addLast(Triple(fill - space, fillId, true))
+                            space
+                        }
                     checksum += fillId * (diskIndex * consume + consume * (consume - 1) / 2L)
                     diskIndex += consume
                     space -= consume
@@ -42,22 +43,23 @@ fun main() {
 
     fun findLastFileOfSize(
         fragmented: MutableList<Triple<Int, Int, Boolean>>,
-        blockLength: Int
+        blockLength: Int,
     ): Int {
-        val search =  fragmented.size -1
+        val search = fragmented.size - 1
         for (i in search downTo 0) {
             val (spaceSize, _, isFile) = fragmented[i]
             if (isFile && spaceSize <= blockLength) {
-               return i
+                return i
             }
         }
         return -1
     }
 
     fun part2(input: List<String>): Long {
-        val fragmented = input.first().mapIndexedNotNull { index, char ->
-            Triple(char.digitToInt(), index / 2, index % 2 == 0) // size, id, isFile
-        }.toMutableList()
+        val fragmented =
+            input.first().mapIndexedNotNull { index, char ->
+                Triple(char.digitToInt(), index / 2, index % 2 == 0) // size, id, isFile
+            }.toMutableList()
 
         var checksum = 0L
         var diskIndex = 0
@@ -66,10 +68,9 @@ fun main() {
             if (blockIsFile) {
                 checksum += blockId * (diskIndex * blockLength + blockLength * (blockLength - 1) / 2L)
                 diskIndex += blockLength
-
             } else {
                 var remaining = blockLength
-                while(remaining >0 ) {
+                while (remaining > 0) {
                     val toRemap = findLastFileOfSize(fragmented, remaining)
                     if (toRemap < 0) {
                         diskIndex += remaining
@@ -89,16 +90,16 @@ fun main() {
 
     val day = "day09"
 
-    validateInput( "$day-part1" , 1928L ) {
+    validateInput("$day-part1", 1928L) {
         part1(readInput("$day/example"))
     }
-    runDay( "$day-part1" , 6241633730082L ) {
+    runDay("$day-part1", 6241633730082L) {
         part1(readInput("$day/input"))
     }
-    validateInput( "$day-part2" , 2858L ) {
+    validateInput("$day-part2", 2858L) {
         part2(readInput("$day/example"))
     }
-    runDay( "$day-part2", 6265268809555L ) {
+    runDay("$day-part2", 6265268809555L) {
         part2(readInput("$day/input"))
     }
 }
