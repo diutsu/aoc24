@@ -18,7 +18,7 @@ fun <T> Matrix<T>.inMatrix(
     return line in this.indices && column in this.first().indices
 }
 
-fun <T> Matrix<T>.inMatrix(reference: Reference): Boolean {
+operator fun <T> Matrix<T>.contains(reference: Reference): Boolean {
     return reference.y in this.indices && reference.x in this.first().indices
 }
 
@@ -96,7 +96,13 @@ enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy
             SOUTH -> WEST
             WEST -> NORTH
         }
-
+    fun rotate270(): CardinalDirections =
+        when (this) {
+            NORTH -> WEST
+            EAST -> NORTH
+            SOUTH -> EAST
+            WEST -> SOUTH
+        }
     companion object {
         fun fromLetter(letter: String): CardinalDirections {
             return when (letter) {
