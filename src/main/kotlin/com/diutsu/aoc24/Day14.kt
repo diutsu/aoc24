@@ -26,7 +26,7 @@ fun main() {
     fun navigate(robots: List<Pair<ReferenceLong, ReferenceLong>>, time: Long, space: ReferenceLong): Long {
         val halfX = space.x / 2
         val halfY = space.y / 2
-        val finalPositions = robots.map { (initial, velocity) -> space.mapInSpace(initial + velocity * time) }
+        val finalPositions = robots.map { (initial, velocity) -> (initial + velocity * time).mod(space) }
         var q1=0L
         var q2=0L
         var q3=0L
@@ -48,7 +48,7 @@ fun main() {
         var time = 1
         var positions = robots.map { it.first  }
         while (time < 10000) { // assume its before this
-            val newPositions = positions.mapIndexed{ index, it -> space.mapInSpace(it + robots[index].second) }
+            val newPositions = positions.mapIndexed{ index, it -> it + robots[index].second.mod(space) }
             val groupedByY = newPositions.groupBy { it.y }
             if (groupedByY.count { it.value.size > 30 } >= 2) {
                 val groupedByX = newPositions.groupBy { it.x }

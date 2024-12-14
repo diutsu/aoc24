@@ -241,8 +241,8 @@ data class ReferenceLong(val x: Long, val y: Long) {
         return true
     }
 
-    fun mapInSpace(position: ReferenceLong): ReferenceLong =
-        ReferenceLong(position.x.mod(this.x), position.y.mod(this.y))
+    fun mod(other: ReferenceLong): ReferenceLong =
+        ReferenceLong(this.x.mod(other.x), this.y.mod(other.y))
 }
 
 data class Movement(val direction: CardinalDirections, val reference: Reference) {
