@@ -209,6 +209,8 @@ data class ReferenceDouble(val x: Double, val y: Double) {
 }
 
 data class ReferenceLong(val x: Long, val y: Long) {
+    constructor(x:Int, y:Int) : this(x.toLong(), y.toLong())
+
     fun plus(
         direction: CardinalDirections,
         walk: Long,
@@ -223,6 +225,7 @@ data class ReferenceLong(val x: Long, val y: Long) {
     override fun toString(): String = "[$x][$y]"
 
     operator fun plus(other: ReferenceLong): ReferenceLong = ReferenceLong(this.x + other.x, this.y + other.y)
+    operator fun times(value: Long): ReferenceLong = ReferenceLong(this.x * value, this.y * value)
 
     override fun hashCode(): Int = (x * 512 + y).toInt()
 
@@ -237,6 +240,9 @@ data class ReferenceLong(val x: Long, val y: Long) {
 
         return true
     }
+
+    fun mapInSpace(position: ReferenceLong): ReferenceLong =
+        ReferenceLong(position.x.mod(this.x), position.y.mod(this.y))
 }
 
 data class Movement(val direction: CardinalDirections, val reference: Reference) {
