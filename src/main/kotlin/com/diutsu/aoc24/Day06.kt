@@ -1,6 +1,6 @@
 package com.diutsu.aoc24
 
-import com.diutsu.aoc.library.CardinalDirections
+import com.diutsu.aoc.library.CardinalDirection
 import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import com.diutsu.aoc.library.mutableMatrix.set
@@ -26,8 +26,8 @@ fun main() {
     fun walkWithBreadcrumbs(
         input: MutableMatrix<Char>,
         initialPosition: Reference,
-        initialDirection: CardinalDirections,
-    ): MutableList<Pair<Reference, CardinalDirections>> {
+        initialDirection: CardinalDirection,
+    ): MutableList<Pair<Reference, CardinalDirection>> {
         var positionX = initialPosition.x
         var positionY = initialPosition.y
         var direction = initialDirection
@@ -63,7 +63,7 @@ fun main() {
     fun fastWalkWithBreadcrumbs(
         input: MutableMatrix<Char>,
         initialPosition: Reference,
-        initialDirection: CardinalDirections,
+        initialDirection: CardinalDirection,
         height: Int,
         width: Int,
         breadcrumbs: MutableList<Reference>,
@@ -96,14 +96,14 @@ fun main() {
 
     fun part1(input: MutableMatrix<Char>): Int {
         val changes = mutableListOf<Reference>()
-        fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirections.NORTH, input.size, input.first().size, changes)
+        fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirection.NORTH, input.size, input.first().size, changes)
         // marginally faster than doing a distinctBy or a map toSet
         return input.sumOf { line -> line.count { it != '.' && it != '#' } }
     }
 
     fun part2(input: MutableMatrix<Char>): Int {
         val position = findInitialPosition(input)
-        val direction = CardinalDirections.NORTH
+        val direction = CardinalDirection.NORTH
         val originalMatrix = input.map { it.toMutableList() } // Copy once for safe modification
         val testObstacles =
             walkWithBreadcrumbs(input.map { it.toMutableList() }, position, direction)

@@ -1,9 +1,9 @@
 package com.diutsu.aoc.library
 
-import com.diutsu.aoc.library.CardinalDirections.EAST
-import com.diutsu.aoc.library.CardinalDirections.NORTH
-import com.diutsu.aoc.library.CardinalDirections.SOUTH
-import com.diutsu.aoc.library.CardinalDirections.WEST
+import com.diutsu.aoc.library.CardinalDirection.EAST
+import com.diutsu.aoc.library.CardinalDirection.NORTH
+import com.diutsu.aoc.library.CardinalDirection.SOUTH
+import com.diutsu.aoc.library.CardinalDirection.WEST
 import java.util.EnumMap
 import kotlin.math.abs
 
@@ -65,14 +65,14 @@ val directions8 =
         Reference(-1, -1),
     )
 
-enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy: Int) {
+enum class CardinalDirection(val id: Int, val letter: Char, val dx: Int, val dy: Int) {
     NORTH(0, 'U', 0, -1),
     EAST(1, 'R', 1, 0),
     SOUTH(2, 'D', 0, 1),
     WEST(3, 'L', -1, 0),
     ;
 
-    fun opposite(): CardinalDirections =
+    fun opposite(): CardinalDirection =
         when (this) {
             NORTH -> SOUTH
             EAST -> WEST
@@ -89,32 +89,36 @@ enum class CardinalDirections(val id: Int, val letter: Char, val dx: Int, val dy
         }
     }
 
-    fun rotate90(): CardinalDirections =
+    fun rotate90(): CardinalDirection =
         when (this) {
             NORTH -> EAST
             EAST -> SOUTH
             SOUTH -> WEST
             WEST -> NORTH
         }
-    fun rotate270(): CardinalDirections =
+
+    fun rotate270(): CardinalDirection =
         when (this) {
             NORTH -> WEST
             EAST -> NORTH
             SOUTH -> EAST
             WEST -> SOUTH
         }
+
     companion object {
-        fun fromLetter(letter: String): CardinalDirections {
+        fun fromLetter(letter: String): CardinalDirection = fromLetter(letter.single())
+
+        fun fromArrow(letter: Char): CardinalDirection {
             return when (letter) {
-                "U" -> NORTH
-                "R" -> EAST
-                "D" -> SOUTH
-                "L" -> WEST
+                '^' -> NORTH
+                '>' -> EAST
+                'v' -> SOUTH
+                '<' -> WEST
                 else -> throw RuntimeException("Invalid direction $letter")
             }
         }
 
-        fun fromLetter(letter: Char): CardinalDirections {
+        fun fromLetter(letter: Char): CardinalDirection {
             return when (letter) {
                 'U' -> NORTH
                 'R' -> EAST
@@ -135,7 +139,7 @@ class Resetable<T>(val initial: T) {
 }
 
 class Walker(var x: Int, var y: Int) {
-    operator fun plus(direction: CardinalDirections): Walker {
+    operator fun plus(direction: CardinalDirection): Walker {
         when (direction) {
             NORTH -> y -= 1
             EAST -> x += 1
@@ -147,7 +151,7 @@ class Walker(var x: Int, var y: Int) {
 }
 
 data class Reference(val x: Int, val y: Int) {
-    operator fun plus(direction: CardinalDirections): Reference =
+    operator fun plus(direction: CardinalDirection): Reference =
         when (direction) {
             NORTH -> Reference(x, y - 1)
             EAST -> Reference(x + 1, y)
@@ -161,13 +165,13 @@ data class Reference(val x: Int, val y: Int) {
 
     operator fun times(value: Int): Reference = Reference(this.x * value, this.y * value)
 
-    fun stepAll() = CardinalDirections.entries.map { this + it }.toSet()
+    fun stepAll() = CardinalDirection.entries.map { this + it }.toSet()
 
     fun plusAll() =
         run {
             val ref = this
-            EnumMap<CardinalDirections, Reference>(CardinalDirections::class.java).apply {
-                CardinalDirections.entries.forEach {
+            EnumMap<CardinalDirection, Reference>(CardinalDirection::class.java).apply {
+                CardinalDirection.entries.forEach {
                     put(it, ref + it)
                 }
             }
@@ -209,10 +213,10 @@ data class ReferenceDouble(val x: Double, val y: Double) {
 }
 
 data class ReferenceLong(val x: Long, val y: Long) {
-    constructor(x:Int, y:Int) : this(x.toLong(), y.toLong())
+    constructor(x: Int, y: Int) : this(x.toLong(), y.toLong())
 
     fun plus(
-        direction: CardinalDirections,
+        direction: CardinalDirection,
         walk: Long,
     ): ReferenceLong =
         when (direction) {
@@ -225,6 +229,7 @@ data class ReferenceLong(val x: Long, val y: Long) {
     override fun toString(): String = "[$x][$y]"
 
     operator fun plus(other: ReferenceLong): ReferenceLong = ReferenceLong(this.x + other.x, this.y + other.y)
+
     operator fun times(value: Long): ReferenceLong = ReferenceLong(this.x * value, this.y * value)
 
     override fun hashCode(): Int = (x * 512 + y).toInt()
@@ -241,16 +246,15 @@ data class ReferenceLong(val x: Long, val y: Long) {
         return true
     }
 
-    fun mod(other: ReferenceLong): ReferenceLong =
-        ReferenceLong(this.x.mod(other.x), this.y.mod(other.y))
+    fun mod(other: ReferenceLong): ReferenceLong = ReferenceLong(this.x.mod(other.x), this.y.mod(other.y))
 }
 
-data class Movement(val direction: CardinalDirections, val reference: Reference) {
+data class Movement(val direction: CardinalDirection, val reference: Reference) {
     override fun toString(): String {
         return "$direction - $reference"
     }
 
-    fun move(direction: CardinalDirections) = Movement(direction, reference + direction)
+    fun move(direction: CardinalDirection) = Movement(direction, reference + direction)
 }
 
 data class Reference3D(val x: Int, val y: Int, val z: Int) {

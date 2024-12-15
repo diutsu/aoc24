@@ -5,7 +5,6 @@ import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
 
 fun main() {
-
     fun blinker(
         depth: Int,
         stone: String,
@@ -15,18 +14,19 @@ fun main() {
         val cached = cache[stone to depth]
         if (cached != null) return cached
 
-        val result = when {
-            stone == "0" -> blinker(depth - 1, "1", cache)
-            stone.length % 2 == 0 -> {
-                val mid = stone.length / 2
-                val first = stone.substring(0, mid)
-                val second = stone.substring(mid).toLong().toString()
-                blinker(depth - 1, first, cache) + blinker(depth - 1, second, cache)
+        val result =
+            when {
+                stone == "0" -> blinker(depth - 1, "1", cache)
+                stone.length % 2 == 0 -> {
+                    val mid = stone.length / 2
+                    val first = stone.substring(0, mid)
+                    val second = stone.substring(mid).toLong().toString()
+                    blinker(depth - 1, first, cache) + blinker(depth - 1, second, cache)
+                }
+                else -> {
+                    blinker(depth - 1, (stone.toLong() * 2024).toString(), cache)
+                }
             }
-            else -> {
-                blinker(depth - 1,  (stone.toLong() * 2024).toString(), cache)
-            }
-        }
         cache[stone to depth] = result
         return result
     }

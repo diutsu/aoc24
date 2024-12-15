@@ -60,7 +60,7 @@ fun validateInput(
             println("✅ [$description] Test ok")
         }
     } catch (e: Exception) {
-        println("💥 [$description] failed : ${e.message}}")
+        println("💥 [$description] failed : ${e.message}")
         e.printStackTrace()
     }
 }
