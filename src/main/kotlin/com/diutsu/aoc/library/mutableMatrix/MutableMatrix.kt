@@ -48,23 +48,12 @@ operator fun <T> MutableMatrix<T>.set(
     this[ref.y][ref.x] = value
 }
 
-operator fun <T> MutableMatrix<T>.set(
-    ref: Walker,
-    value: T,
-) {
-    this[ref.y][ref.x] = value
-}
-
-operator fun <T> MutableMatrix<T>.get(ref: Walker): T {
-    return this[ref.y][ref.x]
-}
-
 operator fun <T> MutableMatrix<T>.contains(ref: Reference): Boolean {
     return ref.y in this.indices && ref.x in this.first().indices
 }
 
 fun <T> MutableMatrix<T>.println() {
     this.forEach {
-        it.joinToString("").println()
+        it.joinToString("").replace('#', '+').println()
     }
 }

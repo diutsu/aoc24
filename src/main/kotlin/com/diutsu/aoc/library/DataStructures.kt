@@ -32,8 +32,16 @@ operator fun <T> Matrix<T>.get(ref: Reference): T {
 }
 
 fun <T> Matrix<T>.println() {
-    this.forEach {
-        it.println()
+    this.forEachIndexed { index, it ->
+        "$index \t$it".println()
+    }
+}
+
+fun <T> Matrix<T>.println(ref: Reference) {
+    this.forEachIndexed { lIndex, it ->
+        it.mapIndexed { index, char ->
+            if(ref.x == index && ref.y == lIndex) '@' else char
+        }.println()
     }
 }
 
@@ -143,18 +151,7 @@ class Resetable<T>(val initial: T) {
     }
 }
 
-class Walker(var x: Int, var y: Int) {
-    operator fun plus(direction: CardinalDirection): Walker {
-        when (direction) {
-            NORTH -> y -= 1
-            EAST -> x += 1
-            SOUTH -> y += 1
-            WEST -> x -= 1
-        }
-        return this
-    }
-}
-
+typealias Walker = Pair<Reference, CardinalDirection>
 data class Reference(val x: Int, val y: Int) {
     operator fun plus(direction: CardinalDirection): Reference =
         when (direction) {

@@ -2,6 +2,7 @@ package com.diutsu.aoc24
 
 import com.diutsu.aoc.library.Reference
 import com.diutsu.aoc.library.graphSSP
+import com.diutsu.aoc.library.graphSSPWithCosts
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
@@ -37,7 +38,7 @@ fun main() {
                 .map { it to 1 }
         }
 
-        graphSSP(start, blocks, neighbours = neighbours, { r, _ -> r == end }, { it, steps -> paths.add(it to steps) })
+        graphSSPWithCosts(start, blocks, neighbours = neighbours, { r, _ -> r == end }, { it, steps -> paths.add(it to steps) })
 
 //        paths.map { it.second }.min()
         return paths.minOf { it.second }
@@ -67,7 +68,7 @@ fun main() {
                     .map { it to 1 }
             }
 
-            graphSSP(
+            graphSSPWithCosts(
                 start,
                 blocks.take(i),
                 neighbours = neighbours,

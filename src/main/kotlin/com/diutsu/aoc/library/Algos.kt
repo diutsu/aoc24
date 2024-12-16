@@ -3,11 +3,10 @@ package com.diutsu.aoc.library
 import java.util.ArrayDeque
 import java.util.PriorityQueue
 
-/**
- * Traverse [graph] from [start] in DFS
- *
- * @return visitedSet
- */
+data class Node<T>(val content: T, var cost: Int = Int.MAX_VALUE) {
+    override fun toString(): String = "[[ $content ] $$cost]"
+}
+
 fun <T, U> graphTraverseDfs(
     start: T,
     graph: U,
@@ -70,7 +69,7 @@ fun <T, U> graphSSPWithBT(
     return minCosts.toMap() to path.toList()
 }
 
-fun <T, U> graphSSP(
+fun <T, U> graphSSPWithCosts(
     start: T,
     graph: U,
     neighbours: (T, U) -> Collection<Pair<T, Int>>,
@@ -100,6 +99,33 @@ fun <T, U> graphSSP(
         }
     }
     return minCosts.toMap()
+}
+fun <T, U> graphSSP(
+    start: T,
+    map: U,
+    isEnd: (T, U) -> Boolean,
+    neighbours: (T, U) -> Collection<Pair<T, Int>>,
+): Map<T, Int> {
+    val toVisit = PriorityQueue<Node<T>>(compareBy { it.cost })
+    val mapCost = mutableMapOf<T, Int>()
+
+    toVisit.add(Node(start, 0))
+    mapCost[start] = 0
+
+    while (toVisit.isNotEmpty()) {
+        val (content, cost) = toVisit.poll()
+
+        if (isEnd(content, map)) continue
+
+        for ((neighbor, neighborCost) in neighbours(content, map)) {
+            val totalCost = cost + neighborCost
+            if (totalCost < (mapCost[neighbor] ?: Int.MAX_VALUE)) {
+                mapCost[neighbor] = totalCost
+                toVisit.add(Node(neighbor, totalCost))
+            }
+        }
+    }
+    return mapCost
 }
 
 fun <T, U> graphTraverseGeneric(
