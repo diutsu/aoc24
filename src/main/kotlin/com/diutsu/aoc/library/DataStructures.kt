@@ -11,6 +11,12 @@ typealias Distance = Long
 
 typealias Matrix<T> = List<List<T>>
 
+
+fun Matrix<Char>.findChar(char: Char): Reference =
+    this.flatMapIndexed { row, line ->
+        line.mapIndexedNotNull { col, c -> if (c == char) Reference(col, row) else null }
+    }.single()
+
 fun <T> Matrix<T>.inMatrix(
     line: Int,
     column: Int,
