@@ -6,67 +6,45 @@ import com.diutsu.aoc.library.validateInput
 
 fun main() {
 
-
     fun part1(input: List<String>): Int {
         val edges = input
-            .map { line -> line.split("-") }
-            .flatMap { (from, to) -> listOf(listOf(from, to), listOf(to, from)) }
-            .groupBy { it[0] }
-            .mapValues { it.value.map { it[1] } }
-//        edges.forEach(::println)
-//        println()
-
-        val tripples = edges.flatMap { (from, to) ->
-            to.flatMap { second ->
-                to.filter { it != second && (edges[second]?.contains(it) ?: false) }
-                    .map { third -> Triple(from, second, third) }
+            .flatMap { line ->
+                val (from, to) = line.split("-")
+                listOf(from to to, to to from)
             }
-        }.map { (a,b,c) -> listOf(a,c,b).sorted().let { Triple(it[0], it[1], it[2]) }
-        }.sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
-            .distinct()
+            .groupBy({ it.first }, { it.second })
 
-//        tripples.forEach { (from, to, third) ->
-//            println("$from,$to,$third")
-//        }
-
-        val r = tripples.filter { (a, b, c) -> a.first() == 't' || b.first() == 't' || c.first() == 't' }
-//        println(r)
-        return r.count()
+        val triplets = HashSet<Triple<String, String, String>>()
+        edges.forEach { (from, neighbors) ->
+            neighbors.forEachIndexed { i, second ->
+                val secondNeighbors = edges[second]!!
+                for (j in i + 1 until neighbors.size) {
+                    val third = neighbors[j]
+                    if (third in secondNeighbors) {
+                        val sortedTriplet = listOf(from, second, third).sorted()
+                        triplets.add(Triple(sortedTriplet[0], sortedTriplet[1], sortedTriplet[2]))
+                    }
+                }
+            }
+        }
+        return triplets.count { (a, b, c) -> a.first() == 't' || b.first() == 't' || c.first() == 't' }
     }
 
     fun part2(input: List<String>): Int {
-        val edges = input
-            .map { line -> line.split("-") }
-            .flatMap { (from, to) -> listOf(listOf(from, to), listOf(to, from)) }
-            .groupBy { it[0] }
-            .mapValues { it.value.map { it[1] }.sorted() }
-//        edges.forEach(::println)
-//        println()
+        val edges = input.flatMap { it.split("-").let { (from, to) -> listOf(from to to, to to from) } }
+            .groupBy({ it.first }, { it.second })
+            .mapValues { (from, neighbors) -> (neighbors + from).toSet() }
 
-        val networks = HashSet<Set<String>>()
-        networks.add(edges.keys.toSet())
+        val networks = mutableSetOf(edges.keys.toSet())
         edges.forEach { (from, target) ->
-            val containing = networks.filter{ it.contains(from)}
-            containing.forEach { c ->
-//                println("Processing From $from To $target, checking in connected $c")
-                if(c.any { !target.contains(it) } ) {
-                    networks.remove(c)
-                    val notContained = c - from
-                    val contained = c.filter { it == from || target.contains(it) }.toSet()
-//                    println(". Split in $contained and $notContained")
-                    if(notContained.size > 2) networks.add(notContained)
-                    if(contained.size > 2) networks.add(contained)
+            networks.filter{ it.contains(from)}.forEach { contained ->
+                if(contained.any { !target.contains(it) } ) {
+                    networks.remove(contained)
+                    networks.add(contained - from)
+                    networks.add(contained.filter { it == from || target.contains(it) }.toSet())
                 }
             }
-//            target.forEach { to ->
-//
-//                val connected = containing.filter { it.contains(to) }.toSet()
-//                networks.removeAll(connected)
-//                val newNetwork = connected + containing
-//                networks.add(newNetwork)
-//            }
         }
-//        networks.forEach { v -> v.sorted().joinToString(",").println() }
         val lan =  networks.maxBy { it.size }.sorted()
         println(lan.joinToString(","))
         return lan.size
@@ -74,12 +52,12 @@ fun main() {
 
     val day = "day23"
 
-//    validateInput( "$day-part1" , 7 ) {
-//        part1(readInput("$day/example"))
-//    }
-//    runDay( "$day-part1" ) {
-//        part1(readInput("$day/input"))
-//    }
+    validateInput( "$day-part1" , 7 ) {
+        part1(readInput("$day/example"))
+    }
+    runDay( "$day-part1", 1154 ) {
+        part1(readInput("$day/input"))
+    }
     validateInput( "$day-part2" , 4 ) {
         part2(readInput("$day/example"))
     }
