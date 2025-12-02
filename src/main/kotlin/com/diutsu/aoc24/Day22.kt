@@ -5,8 +5,10 @@ import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
 
 fun main() {
-
-    fun generate(number: Int, n: Int): MutableList<Int> {
+    fun generate(
+        number: Int,
+        n: Int,
+    ): MutableList<Int> {
         val seq = mutableListOf<Int>()
         var x = number
         repeat(n) {
@@ -25,13 +27,13 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        val allSequences = mutableMapOf<List<Int>,Int>()
+        val allSequences = mutableMapOf<List<Int>, Int>()
         input.map { buyer ->
             val prices = generate(buyer.toInt(), 2000).map { it % 10 }
             val buyerSequence = mutableSetOf<List<Int>>()
             val changes = prices.zipWithNext { a, b -> b - a }
             changes.windowed(4).forEachIndexed { index, window ->
-                if(buyerSequence.add(window)) {
+                if (buyerSequence.add(window)) {
                     allSequences[window] = (allSequences[window] ?: 0) + prices[index + 4]
                 }
             }
@@ -41,17 +43,17 @@ fun main() {
 
     val day = "day22"
 
-    validateInput( "$day-part1" , 37327623 ) {
+    validateInput("$day-part1", 37327623) {
         part1(readInput("$day/example"))
     }
-    runDay( "$day-part1", 17577894908) {
+    runDay("$day-part1", 17577894908) {
         part1(readInput("$day/input"))
     }
-    validateInput( "$day-part2" , 23 ) {
+    validateInput("$day-part2", 23) {
         part2(readInput("$day/example2"))
     }
 
-    runDay( "$day-part2" , 1931) {
+    runDay("$day-part2", 1931) {
         part2(readInput("$day/input"))
     }
 }

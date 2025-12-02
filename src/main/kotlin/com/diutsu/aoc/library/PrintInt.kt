@@ -3,7 +3,6 @@ package com.diutsu.aoc.library
 import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import com.diutsu.aoc.library.mutableMatrix.get
 import com.diutsu.aoc.library.mutableMatrix.set
-import java.sql.Ref
 
 fun printMap(
     spaceY: Long,
@@ -42,10 +41,13 @@ fun printStatus(
     warehouse[robotPos] = old
 }
 
-fun printMap(map: Matrix<Char>, filter: (Reference) -> Char ={map[it] }) {
+fun printMap(
+    map: Matrix<Char>,
+    filter: (Reference) -> Char = { map[it] },
+) {
     map.forEachIndexed { y, line ->
         line.forEachIndexed { x, it ->
-            print(filter(Reference(x,y)))
+            print(filter(Reference(x, y)))
         }
         println()
     }

@@ -28,16 +28,16 @@ fun <T, U> graphTraverseDfs(
     return visited
 }
 
-
 fun <T, U> graphSSPWithBT(
     start: T,
     graph: U,
     neighbours: (T, U) -> Collection<Pair<T, Int>>,
     end: T,
-    acc: (T, Int) -> Unit
+    acc: (T, Int) -> Unit,
 ): Pair<Map<T, Int>, List<T>> {
-    val toVisit = PriorityQueue(compareBy<Pair<T, Int>> { it.second })
-        .apply { add(start to 0) }
+    val toVisit =
+        PriorityQueue(compareBy<Pair<T, Int>> { it.second })
+            .apply { add(start to 0) }
     val minCosts = mutableMapOf<T, Int>()
     val previous = mutableMapOf<T, T>()
 
@@ -70,16 +70,16 @@ fun <T, U> graphSSPWithBT(
     return minCosts.toMap() to path.toList()
 }
 
-
 fun <T, U> graphSSP(
     start: T,
     graph: U,
     neighbours: (T, U) -> Collection<Pair<T, Int>>,
     isEnd: (T, U) -> Boolean,
-    acc: (T, Int) -> Unit
-) : Map<T, Int> {
-    val toVisit = PriorityQueue(compareBy<Pair<T, Int>> { it.second })
-        .apply { add(start to 0) }
+    acc: (T, Int) -> Unit,
+): Map<T, Int> {
+    val toVisit =
+        PriorityQueue(compareBy<Pair<T, Int>> { it.second })
+            .apply { add(start to 0) }
     val minCosts = mutableMapOf<T, Int>()
 
     while (toVisit.isNotEmpty()) {

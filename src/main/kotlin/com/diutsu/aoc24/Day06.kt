@@ -94,14 +94,14 @@ fun main() {
         return false
     }
 
-    fun part1(input: MutableMatrix<Char>): Int {
+    fun day06part1(input: MutableMatrix<Char>): Int {
         val changes = mutableListOf<Reference>()
         fastWalkWithBreadcrumbs(input, findInitialPosition(input), CardinalDirection.NORTH, input.size, input.first().size, changes)
         // marginally faster than doing a distinctBy or a map toSet
         return input.sumOf { line -> line.count { it != '.' && it != '#' } }
     }
 
-    fun part2(input: MutableMatrix<Char>): Int {
+    fun day06part2(input: MutableMatrix<Char>): Int {
         val position = findInitialPosition(input)
         val direction = CardinalDirection.NORTH
         val originalMatrix = input.map { it.toMutableList() } // Copy once for safe modification
@@ -134,18 +134,18 @@ fun main() {
     val day = "day06"
 
     validateInput("$day-part1", 41) {
-        part1(readFileAsMutableMatrix("$day/example"))
+        day06part1(readFileAsMutableMatrix("$day/example"))
     }
 
     runDay("$day-part1", 5531) {
-        part1(readFileAsMutableMatrix("$day/input"))
+        day06part1(readFileAsMutableMatrix("$day/input"))
     }
 
     validateInput("$day-part2", 6) {
-        part2(readFileAsMutableMatrix("$day/example"))
+        day06part2(readFileAsMutableMatrix("$day/example"))
     }
 
     runDay("$day-part2", 2165) {
-        part2(readFileAsMutableMatrix("$day/input"))
+        day06part2(readFileAsMutableMatrix("$day/input"))
     }
 }

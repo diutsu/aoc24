@@ -5,8 +5,10 @@ import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
 
 fun main() {
-
-    fun checkTowel(towel: String, patterns: List<String>) : Int {
+    fun checkTowel(
+        towel: String,
+        patterns: List<String>,
+    ): Int {
         val toVisit = mutableListOf(towel)
         val visited = mutableMapOf<String, Int>() // Memoization map to track counts
         var totalCount = 0 // Total count of matches
@@ -38,8 +40,10 @@ fun main() {
         return totalCount
     }
 
-
-    fun checkTowelCount(towel: String, patterns: List<String>): Long {
+    fun checkTowelCount(
+        towel: String,
+        patterns: List<String>,
+    ): Long {
         val memo = mutableMapOf<String, Long>()
 
         fun helper(current: String): Long {
@@ -78,7 +82,7 @@ fun main() {
 
         val towels = input.drop(2)
 
-        val cache = mutableMapOf<String,Boolean>()
+        val cache = mutableMapOf<String, Boolean>()
         return towels.sumOf { towel ->
             checkTowelCount(towel, patterns).also {
                 println("Towel $towel has $it matches")
@@ -94,10 +98,10 @@ fun main() {
 //    runDay( "$day-part1" ) {
 //        part1(readInput("$day/input"))
 //    }
-    validateInput( "$day-part2" , 16 ) {
+    validateInput("$day-part2", 16) {
         part2(readInput("$day/example"))
     }
-    runDay( "$day-part2" ) {
+    runDay("$day-part2") {
         part2(readInput("$day/input"))
     }
 }

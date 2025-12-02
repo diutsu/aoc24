@@ -1,20 +1,17 @@
 package com.diutsu.aoc24
 
-import com.diutsu.aoc.library.graphTraverseBfs
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
-import com.diutsu.aoc.library.validateInput
 import kotlin.math.pow
 import kotlin.math.truncate
 
 fun main() {
-
     fun runProgram(
         ip: Int,
         program: List<Int>,
         regA: Long,
         regB: Long,
-        regC: Long
+        regC: Long,
     ): List<Long> {
         var ip1 = ip
         var regA1 = regA
@@ -24,13 +21,14 @@ fun main() {
         while (ip1 < program.size) {
             val op = program[ip1]
             val combo = program[ip1 + 1]
-            val comboValue = when (combo) {
-                4 -> regA1
-                5 -> regB1
-                6 -> regC1
-                7 -> throw RuntimeException("Unknown combo value $combo")
-                else -> combo.toLong()
-            }
+            val comboValue =
+                when (combo) {
+                    4 -> regA1
+                    5 -> regB1
+                    6 -> regC1
+                    7 -> throw RuntimeException("Unknown combo value $combo")
+                    else -> combo.toLong()
+                }
             when (op) {
                 0 -> regA1 = truncate(regA1 / 2.0.pow(comboValue.toDouble())).toLong()
                 1 -> regB1 = regB1 xor combo.toLong()
@@ -57,7 +55,7 @@ fun main() {
         val program = input[4].split(": ")[1].split(",").map { it.toInt() }
 
         val result = runProgram(0, program, regA, regB, regC)
-        println( result.joinToString(","))
+        println(result.joinToString(","))
         return input.size
     }
 
@@ -80,9 +78,9 @@ fun main() {
 //            println("$regA -> ${result.size} $result")
 //        }
 
-        val toVisit = ArrayDeque<Pair<Long, List<Int>>>().apply { add(0L to  program ) }
+        val toVisit = ArrayDeque<Pair<Long, List<Int>>>().apply { add(0L to program) }
         val out = mutableSetOf<Long>()
-        while(toVisit.isNotEmpty()) {
+        while (toVisit.isNotEmpty()) {
             val (a, missingProgram) = toVisit.removeFirst()
 
             if (missingProgram.isEmpty()) {
@@ -90,8 +88,7 @@ fun main() {
                 continue
             }
             val goal = missingProgram.last()
-            println("In search of A that results in $goal. in $a / $missingProgram. To visit: ${toVisit} ")
-
+            println("In search of A that results in $goal. in $a / $missingProgram. To visit: $toVisit ")
 
             for (i in 0 until 8) {
                 val output = runProgram(0, program, 8L * a + i, 0, 0)
@@ -102,7 +99,6 @@ fun main() {
             }
         }
         return out.min()
-
     }
 
     val day = "day17"
@@ -122,7 +118,7 @@ fun main() {
 //    validateInput( "$day-part2" , 117440 ) {
 //        part2(readInput("$day/example4"))
 //    }
-    runDay( "$day-part2" ) {
+    runDay("$day-part2") {
         part2(readInput("$day/input"))
     }
 }

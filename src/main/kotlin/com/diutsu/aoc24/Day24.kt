@@ -5,10 +5,16 @@ import com.diutsu.aoc.library.runDay
 import com.diutsu.aoc.library.validateInput
 
 enum class GateOperator {
-    AND, OR, XOR;
+    AND,
+    OR,
+    XOR,
+    ;
 
-    fun apply(input1: Boolean, input2: Boolean): Boolean {
-        return when(this) {
+    fun apply(
+        input1: Boolean,
+        input2: Boolean,
+    ): Boolean {
+        return when (this) {
             AND -> input1 && input2
             OR -> input1 || input2
             XOR -> input1 xor input2
@@ -17,7 +23,7 @@ enum class GateOperator {
 
     companion object {
         fun fromString(value: String): GateOperator {
-            return when(value) {
+            return when (value) {
                 "AND" -> AND
                 "OR" -> OR
                 "XOR" -> XOR
@@ -28,12 +34,12 @@ enum class GateOperator {
 }
 
 data class Gate(val a: String, val b: String, val op: GateOperator, val out: String) {
-    fun wired(wires: Map<String,Boolean>): Pair<String, Boolean> {
+    fun wired(wires: Map<String, Boolean>): Pair<String, Boolean> {
         return out to op.apply(wires[a]!!, wires[b]!!)
     }
 
     fun reversed(): Gate {
-        return Gate(b,a,op,out)
+        return Gate(b, a, op, out)
     }
 
     fun isXorY(): Boolean {
@@ -46,7 +52,6 @@ data class Gate(val a: String, val b: String, val op: GateOperator, val out: Str
 }
 
 fun main() {
-
     fun toLong(zWires: List<Boolean>): Long {
         var acc = 0L
         zWires.forEachIndexed { index, b -> acc = acc or (if (b) 1L shl index else 0L) }
@@ -74,7 +79,7 @@ fun main() {
 
     fun part1(input: List<String>): Long {
         val (wires, gates) = readInput(input)
-        while(gates.isNotEmpty()) {
+        while (gates.isNotEmpty()) {
             val gate = gates.first { wires[it.a] != null && wires[it.b] != null }
             gates.remove(gate)
             val (outWire, outVal) = gate.wired(wires)
@@ -82,8 +87,9 @@ fun main() {
             wires[outWire] = outVal
         }
 
-        val zWires = wires.entries.filter { (k,_) -> k.startsWith("z") }
-            .sortedBy { (k,_) -> k }
+        val zWires =
+            wires.entries.filter { (k, _) -> k.startsWith("z") }
+                .sortedBy { (k, _) -> k }
 
         return toLong(zWires.map { it.value })
     }
@@ -100,11 +106,11 @@ fun main() {
                     suspiciousOutputs.add(gate.out)
                 }
                 gate.isXorY() && gate.op == GateOperator.XOR &&
-                        gates.any { (it.a == gate.out || it.b == gate.out) && it.op == GateOperator.OR } -> {
+                    gates.any { (it.a == gate.out || it.b == gate.out) && it.op == GateOperator.OR } -> {
                     suspiciousOutputs.add(gate.out)
                 }
                 gate.isXorY() && gate.op == GateOperator.AND && gate.a != "x00" && gate.b != "x00" &&
-                        gates.any { (it.a == gate.out || it.b == gate.out) && it.op == GateOperator.XOR } -> {
+                    gates.any { (it.a == gate.out || it.b == gate.out) && it.op == GateOperator.XOR } -> {
                     suspiciousOutputs.add(gate.out)
                 }
             }
@@ -115,15 +121,20 @@ fun main() {
         return errors.size
     }
 
-
     fun part2Exploratory(input: List<String>): Int {
-        val correction = mutableMapOf<String,String>()
-        val (_, gates) = readInput(input).let { (w, gates) ->
-            w to gates.map {
-                if(correction[it.out] != null ) { Gate(correction[it.out]!!, it.b, it.op, it.out) } else { it }
+        val correction = mutableMapOf<String, String>()
+        val (_, gates) =
+            readInput(input).let { (w, gates) ->
+                w to
+                    gates.map {
+                        if (correction[it.out] != null) {
+                            Gate(correction[it.out]!!, it.b, it.op, it.out)
+                        } else {
+                            it
+                        }
+                    }
             }
-        }
-        val rename = mutableMapOf<String,String>()
+        val rename = mutableMapOf<String, String>()
         gates.filter {
             (it.a.startsWith("x") || it.a.startsWith("y")) && !it.out.startsWith("z")
         }.forEach {
@@ -132,7 +143,7 @@ fun main() {
             if (isSum) {
                 rename[it.out] = "P" + it.a.drop(1)
             } else if (isHalfCarry) {
-                if(it.a.drop(1) == "00") {
+                if (it.a.drop(1) == "00") {
                     rename[it.out] = "C01"
                 } else {
                     rename[it.out] = "H" + it.a.drop(1)
@@ -147,11 +158,14 @@ fun main() {
         }.forEach {
             val ar = rename[it.a] ?: it.a
             val br = rename[it.b] ?: it.b
-            val gateN = (ar.takeIf { it.first().isUpperCase() }
-                ?: br.takeIf { it.first().isUpperCase() })?.drop(1)
-                ?: throw IllegalArgumentException("Unexpected gate $it")
+            val gateN =
+                (
+                    ar.takeIf { it.first().isUpperCase() }
+                        ?: br.takeIf { it.first().isUpperCase() }
+                )?.drop(1)
+                    ?: throw IllegalArgumentException("Unexpected gate $it")
 
-            if(ar.startsWith("P") || br.startsWith("P")) {
+            if (ar.startsWith("P") || br.startsWith("P")) {
                 val isNextCarry = it.op == GateOperator.AND
                 val isSum = it.op == GateOperator.XOR
                 if (isSum) {
@@ -161,10 +175,10 @@ fun main() {
                     rename[it.out] = "N$gateN"
                 }
             }
-            if(ar.startsWith("H") || br.startsWith("H")) {
+            if (ar.startsWith("H") || br.startsWith("H")) {
                 val isNextCarry = it.op == GateOperator.OR
                 if (isNextCarry) {
-                    rename[it.out] = "C" + (gateN.toInt()+1).toString().padStart(2,'0')
+                    rename[it.out] = "C" + (gateN.toInt() + 1).toString().padStart(2, '0')
                 }
             }
         }
@@ -174,30 +188,28 @@ fun main() {
                 val ar = rename[it.a] ?: it.a
                 val br = rename[it.b] ?: it.b
                 val or = rename[it.out] ?: it.out
-                if(it.op != GateOperator.XOR) {
+                if (it.op != GateOperator.XOR) {
                     println("Unexpected Gate ${it.a} ($ar) ${it.op} ${it.b}($br) -> $or (${it.out})")
-                    if(ar.startsWith("y")) {
-                        val expected = rename.filter { (_,v) -> v == "H31"}
+                    if (ar.startsWith("y")) {
+                        val expected = rename.filter { (_, v) -> v == "H31" }
                         println("expected to be $expected")
                     }
 
-
-                    if(ar.startsWith("P") && it.op == GateOperator.AND) {
-                        val expected = rename.filter { (_,v) -> v == "N18"}
+                    if (ar.startsWith("P") && it.op == GateOperator.AND) {
+                        val expected = rename.filter { (_, v) -> v == "N18" }
                         println("expected to be $expected")
                     }
 
-                    if(ar == "H44") {
-                        val expected = rename.filter { (_,v) -> v == "C45"}
+                    if (ar == "H44") {
+                        val expected = rename.filter { (_, v) -> v == "C45" }
                         println("expected to be $expected")
                     }
-                    if(ar == "H27") {
-                        val expected = rename.filter { (_,v) -> v == "C28"}
+                    if (ar == "H27") {
+                        val expected = rename.filter { (_, v) -> v == "C28" }
                         println("expected to be $expected")
                     }
                 }
             }
-
 
         gates.forEach {
             val ar = rename[it.a] ?: it.a
@@ -207,21 +219,22 @@ fun main() {
         }
 
         val vername = rename.entries.associate { (k, v) -> v to k }
-        (1 until 44).forEach {
-            val gn = it.toString().padStart(2,'0')
-            val gn1 = (it+1).toString().padStart(2,'0')
+        (1 until 44).forEach { gate ->
+            val gn = gate.toString().padStart(2, '0')
+            val gn1 = (gate + 1).toString().padStart(2, '0')
             listOf(
                 Gate("x$gn", "y$gn", GateOperator.XOR, vername["P$gn"] ?: "PX$gn"),
                 Gate("x$gn", "y$gn", GateOperator.AND, vername["H$gn"] ?: "HX$gn"),
-
                 Gate(vername["P$gn"] ?: "PX$gn", vername["C$gn"] ?: "CX$gn", GateOperator.XOR, "z$gn"),
                 Gate(vername["P$gn"] ?: "PX$gn", vername["C$gn"] ?: "CX$gn", GateOperator.AND, vername["N$gn"] ?: "NX$gn"),
-
-                Gate(vername["H$gn"] ?: "HX$gn", vername["N$gn"] ?: "NX$gn", GateOperator.OR, vername["C$gn1"] ?: "CX$gn}")
+                Gate(vername["H$gn"] ?: "HX$gn", vername["N$gn"] ?: "NX$gn", GateOperator.OR, vername["C$gn1"] ?: "CX$gn}"),
             ).forEach { test ->
-                if(test !in gates && test.reversed() !in gates) {
-                    val instead  = gates.filter {it.op == test.op && ((it.a == test.a && it.b == test.b) || (it.a == test.b && it.b == test.a)) }
-                    if(instead.isNotEmpty()) {
+                if (test !in gates && test.reversed() !in gates) {
+                    val instead =
+                        gates.filter {
+                            it.op == test.op && ((it.a == test.a && it.b == test.b) || (it.a == test.b && it.b == test.a))
+                        }
+                    if (instead.isNotEmpty()) {
                         println("Could not find expected gate $test (${rename[test.a]}, ${rename[test.b]}} -> ${rename[test.out]}")
                         println("Instead found $instead")
                     }
@@ -230,21 +243,19 @@ fun main() {
         }
 
         val errors = correction.keys.sorted()
-        println( errors.all { it in vername.keys})
+        println(errors.all { it in vername.keys })
         println(errors.joinToString(","))
         return 0
-
     }
     val day = "day24"
 
-    validateInput( "$day-part1" , 2024) {
+    validateInput("$day-part1", 2024) {
         part1(readInput("$day/example"))
     }
-    runDay( "$day-part1", 51745744348272) {
+    runDay("$day-part1", 51745744348272) {
         part1(readInput("$day/input"))
     }
-    runDay( "$day-part2" , 8) {
+    runDay("$day-part2", 8) {
         part2(readInput("$day/input"))
     }
-
 }
