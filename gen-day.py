@@ -4,11 +4,12 @@ from datetime import datetime
 from aocd import get_data
 import webbrowser
 
-aoc = "aoc24"
+year = datetime.now().year - 2000
+aoc = "aoc" + str(year)
 main_folder = "src/main/kotlin/com/diutsu/" + aoc
 
 # Kotlin template
-main_template = """package com.diutsu.aoc24
+main_template = """package com.diutsu.{{ aoc }}
 
 import com.diutsu.aoc.library.readInput
 import com.diutsu.aoc.library.runDay
@@ -44,7 +45,10 @@ fun main() {
 def create_day_main_kotlin_file(day):
     # Create main folder if it doesn't exist
     os.makedirs(main_folder, exist_ok=True)
-    kotlin_code = main_template.replace("{{ day }}", "day" + day)
+    kotlin_code = (main_template
+                       .replace("{{ aoc }}", aoc)
+                       .replace("{{ day }}", "day" + day)
+                   )
 
     # Create main Kotlin file
     file_name = os.path.abspath(main_folder + "/Day" + day + ".kt")
