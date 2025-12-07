@@ -9,11 +9,13 @@ import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 
+const val AOC25 = "aoc25"
+
 /**
  * Reads lines from the given input txt file.
  */
 fun readInput(name: String): List<String> {
-    val file = Path("inputs/aoc24/$name.txt")
+    val file = Path("inputs/$AOC25/$name.txt")
     if (file.exists()) {
         return file.readText().trim().lines()
     } else {
@@ -81,5 +83,10 @@ fun runDay(
     expected: Number? = null,
     runnable: () -> Number,
 ) {
-    stressTest(description, expected = expected, warmup = 0, iterations = 0) { runnable() }
+    try {
+        stressTest(description, expected = expected, warmup = 0, iterations = 0) { runnable() }
+    } catch (e: Exception) {
+        println("💥 [$description] failed : ${e.message}")
+        e.printStackTrace()
+    }
 }
