@@ -52,3 +52,6 @@ fun printMap(
         println()
     }
 }
+
+fun pad(value : Number, pad: Int) =
+    value.toString().padStart(pad, ' ')

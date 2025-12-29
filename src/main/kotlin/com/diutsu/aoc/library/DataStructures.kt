@@ -4,6 +4,7 @@ import com.diutsu.aoc.library.CardinalDirection.EAST
 import com.diutsu.aoc.library.CardinalDirection.NORTH
 import com.diutsu.aoc.library.CardinalDirection.SOUTH
 import com.diutsu.aoc.library.CardinalDirection.WEST
+import com.diutsu.aoc.library.mutableMatrix.MutableMatrix
 import java.util.EnumMap
 import kotlin.math.abs
 
